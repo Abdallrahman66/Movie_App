@@ -1,10 +1,12 @@
-import 'dart:developer';
+
 
 import 'package:flutter/material.dart';
+import 'package:movie_app/core/dialogs/app_toastes.dart';
 import 'package:movie_app/core/utils/app_colors.dart';
 
 class CustomActionBookmark extends StatefulWidget {
   const CustomActionBookmark({super.key});
+  
 
   @override
   State<CustomActionBookmark> createState() => _CustomActionBookmarkState();
@@ -18,9 +20,19 @@ class _CustomActionBookmarkState extends State<CustomActionBookmark> {
       isSaved = !isSaved;
     });
     if (isSaved) {
-      log("Added to Watchlist");
+      AppToast.show(
+        context: context,
+        title: "1",
+        description: "Saved",
+        type: .success,
+      );
     } else {
-      log("Removed from Watchlist");
+      AppToast.show(
+        context: context,
+        title: "2",
+        description: "unSaved",
+        type: .success,
+      );
     }
   }
 

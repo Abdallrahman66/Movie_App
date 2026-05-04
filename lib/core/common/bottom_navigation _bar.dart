@@ -3,15 +3,14 @@ import 'package:movie_app/core/utils/app_colors.dart';
 import 'package:movie_app/core/utils/assets_icons.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
- 
-  final int selectedIndex;
-  final Function(int) onDestinationSelected;
-
   const CustomBottomNavigationBar({
     super.key,
     required this.selectedIndex,
     required this.onDestinationSelected,
   });
+
+  final int selectedIndex;
+  final Function(int) onDestinationSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +37,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         backgroundColor: AppColor.barColor,
         indicatorColor: Colors.transparent,
         selectedIndex: selectedIndex,
-        onDestinationSelected: onDestinationSelected, // بنبعت الـ index للي بره
+        onDestinationSelected: onDestinationSelected,
         destinations: <Widget>[
           const NavigationDestination(
             selectedIcon: Icon(Icons.home, color: Colors.blue),

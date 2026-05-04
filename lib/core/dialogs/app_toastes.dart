@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:toastification/toastification.dart';
 
+///! how to use
+///ex:
+///AppToast.show(
+///  context: context,
+///   title: "Added to Watchlist",
+///   description: "Movie saved successfully ",
+///   type: .success,
+/// );
+
 abstract class AppToast {
   static void show({
     required BuildContext context,
@@ -14,9 +23,9 @@ abstract class AppToast {
     toastification.show(
       context: context,
       type: type,
-      style: ToastificationStyle.flatColored,
-      autoCloseDuration: const Duration(seconds: 3),
-      alignment: Alignment.topCenter,
+      style: .flatColored,
+      autoCloseDuration: const Duration(seconds: 2),
+      alignment: .topCenter,
 
       title: Row(
         children: [
@@ -27,8 +36,8 @@ abstract class AppToast {
               title,
               style: const TextStyle(
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+                fontWeight: .bold,
+                color: Color(0xffffffff),
               ),
             ),
           ),
@@ -39,13 +48,13 @@ abstract class AppToast {
         padding: const EdgeInsets.only(left: 30),
         child: Text(
           description,
-          style: const TextStyle(fontSize: 14, color: Colors.white70),
+          style: const TextStyle(fontSize: 14, color: Colors.black),
         ),
       ),
 
-      backgroundColor: const Color(0xFF1C1C1E), 
-      foregroundColor: Colors.white,
-      borderRadius: BorderRadius.circular(16),
+      backgroundColor: const Color(0xFF1C1C1E),
+      foregroundColor: Color(0xffffffff),
+      borderRadius: .circular(16),
       borderSide: BorderSide(color: mainColor.withOpacity(0.4)),
       boxShadow: [
         BoxShadow(
@@ -54,31 +63,23 @@ abstract class AppToast {
           spreadRadius: 1,
         ),
       ],
-
-      showProgressBar: true,
-      progressBarTheme: ProgressIndicatorThemeData(
-        color: mainColor,
-        linearTrackColor: Colors.white12,
-      ),
     );
   }
-
 
   static Color _getColor(ToastificationType type) {
     switch (type) {
       case ToastificationType.success:
-        return Colors.greenAccent;
+        return Colors.green;
       case ToastificationType.info:
-        return Colors.blueAccent;
+        return Colors.blue;
       case ToastificationType.warning:
-        return Colors.orangeAccent;
+        return Colors.orange;
       case ToastificationType.error:
-        return Colors.redAccent;
+        return Colors.red;
       default:
         return Colors.white;
     }
   }
-
 
   static IconData _getIcon(ToastificationType type) {
     switch (type) {
@@ -95,11 +96,3 @@ abstract class AppToast {
     }
   }
 }
-
-///! how to use
-///AppToast.show(
-//   context: context,
-//   title: "Added to Watchlist",
-//   description: "Movie saved successfully 🎬",
-//   type: ToastificationType.success,
-// );
