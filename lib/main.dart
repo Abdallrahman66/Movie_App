@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/app_section/app_section_view.dart';
+import 'package:movie_app/core/di/service_locatore.dart';
 import 'package:movie_app/feature/details/presentation/view/details_movie_screen.dart';
 import 'package:movie_app/feature/home/presentation/view/home_screen.dart';
 import 'package:movie_app/feature/search/presentation/view/Search_screen.dart';
@@ -7,6 +8,7 @@ import 'package:movie_app/feature/search/presentation/view/invalid_search_screen
 import 'package:movie_app/feature/watch_list/presentation/view/watch_list.dart';
 
 void main() async {
+  configureDependencies();
   runApp(const MyApp());
 }
 
