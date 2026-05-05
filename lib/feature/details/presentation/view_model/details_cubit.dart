@@ -9,13 +9,14 @@ import 'package:movie_app/feature/details/domain/use_case/get_similar_use_case.d
 part 'details_state.dart';
 
 class DetailsCubit extends Cubit<DetailsState> {
-  DetailsCubit(this._details, this._similar) : super(DetailsInitial());
+  DetailsCubit(this._details, this._similar, this.id) : super(DetailsInitial());
   final GetDetailsUseCase _details;
   final GetSimilarUseCase _similar;
 
+  int id;
   Future<void> getDetails() async {
     emit(DetailsLoadingState());
-    final result = await _details.invoke();
+    final result = await _details.invoke(id);
     switch (result) {
       case SuccessApi<DetailsEntity>():
         emit(DetailsSuccessState());
@@ -26,12 +27,14 @@ class DetailsCubit extends Cubit<DetailsState> {
 
   Future<void> getSimilar() async {
     emit(SimilarLoadingState());
-    final result = await _similar.invoke();
+    final result = await _similar.invoke(id);
     switch (result) {
-      case SuccessApi<SimilarEntity>():
+      case SuccessApi<List<SimilarEntity>>():
         emit(SimilarSuccessState());
-      case ErrorApi<SimilarEntity>():
+      case ErrorApi<List<SimilarEntity>>():
         emit(SimilarErrorState(result.errorMassage));
     }
   }
 }
+
+//  Future<ResultApi<List<SimilarEntity>>>

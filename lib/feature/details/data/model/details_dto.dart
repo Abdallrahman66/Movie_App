@@ -1,3 +1,5 @@
+import 'package:movie_app/feature/details/domain/entities/details_entity.dart';
+
 class DetailsDto {
   DetailsDto({
     this.adult,
@@ -56,6 +58,26 @@ class DetailsDto {
   bool? video;
   double? voteAverage;
   int? voteCount;
+
+  DetailsEntity toEntity() {
+    return DetailsEntity(
+      coverImage: backdropPath ?? '',
+
+      image: posterPath ?? '',
+
+      publishDate: releaseDate ?? "",
+
+      category: (genres != null && genres!.isNotEmpty)
+          ? genres![0].name ?? 'Uncategorized'
+          : 'Uncategorized',
+
+      timeOfMovie: "${runtime ?? 0} Minutes",
+
+      title: title ?? 'No Title',
+
+      description: overview ?? 'No Description',
+    );
+  }
 
   DetailsDto.fromJson(Map<String, dynamic> json) {
     adult = json['adult'];

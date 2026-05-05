@@ -11,7 +11,7 @@ class DetailsEntity {
 
   String coverImage;
   String image;
-  DateTime publishDate;
+  String publishDate;
   String category;
   String timeOfMovie;
   String title;

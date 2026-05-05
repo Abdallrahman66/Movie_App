@@ -1,4 +1,5 @@
 import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/details/data/repo/repository/details_repository_imp.dart';
 import 'package:movie_app/feature/details/domain/entities/similar_entity.dart';
 import 'package:movie_app/feature/details/domain/repo/repository/details_repository.dart';
 
@@ -7,8 +8,8 @@ class GetSimilarUseCase {
 
   final DetailsRepository _repo;
 
-  Future<ResultApi<SimilarEntity>> invoke() => _repo.getSimilar();
+  Future<ResultApi<List<SimilarEntity>>> invoke(int id) => _repo.getSimilar(id);
 }
 
-// GetNewsUseCase getNewsUseCaseInject() =>
-//     GetNewsUseCase(homeRepositoryinjectable());
+GetSimilarUseCase getSimilarUseCaseInject() =>
+    GetSimilarUseCase(detailsRepositoryImpIngectable());
