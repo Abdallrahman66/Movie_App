@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/app_section/app_section_view.dart';
-import 'package:movie_app/feature/details/presentation/view/details_movie_screen.dart';
+import 'package:movie_app/feature/details/presentation/view/screens/details_movie_screen.dart';
 import 'package:movie_app/feature/home/presentation/view/home_screen.dart';
 import 'package:movie_app/feature/search/presentation/view/Search_screen.dart';
 import 'package:movie_app/feature/search/presentation/view/invalid_search_screen.dart';
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: AppSectionView.routeName,
+      initialRoute: DetailsMovieScreen.routeName,
       routes: {
         AppSectionView.routeName: (context) => const AppSectionView(),
         HomeScreen.routeName: (context) => const HomeScreen(),
