@@ -69,7 +69,7 @@ class DetailsDto {
           ? "https://image.tmdb.org/t/p/w500$posterPath"
           : "assets/images/image.png",
 
-      publishDate: releaseDate?.split(' ').first ?? "0000",
+      publishDate: releaseDate?.split('-').first ?? "0000",
 
       category: (genres != null && genres!.isNotEmpty)
           ? genres![0].name ?? 'Uncategorized'
@@ -80,6 +80,7 @@ class DetailsDto {
       title: title ?? 'No Title',
 
       description: overview ?? 'No Description',
+      voteAverage: voteAverage ?? 0,
     );
   }
 

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/core/utils/assets_icons.dart';
+import 'package:movie_app/core/widgets/cache_networkImage_widget.dart';
+import 'package:movie_app/feature/details/domain/entities/details_entity.dart';
 import 'package:movie_app/feature/details/presentation/view/widgets/item_row_icon_text_widget.dart';
 
 class ViewMovieWidget extends StatelessWidget {
-  const ViewMovieWidget({super.key});
+  const ViewMovieWidget({super.key, required this.movieDetails});
+  final DetailsEntity movieDetails;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +21,7 @@ class ViewMovieWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 image: DecorationImage(
-                  image: AssetImage("assets/images/cover.png"),
+                  image: NetworkImage(movieDetails.coverImage),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -36,7 +39,10 @@ class ViewMovieWidget extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(Icons.star_border, color: Color(0xffFF8700), size: 18),
-                    Text(" 9.5", style: TextStyle(color: Color(0xffFF8700))),
+                    Text(
+                      movieDetails.voteAverage.roundToDouble().toString(),
+                      style: TextStyle(color: Color(0xffFF8700)),
+                    ),
                   ],
                 ),
               ),
@@ -49,14 +55,14 @@ class ViewMovieWidget extends StatelessWidget {
                 crossAxisAlignment: .end,
 
                 children: [
-                  Image.asset(
-                    "assets/images/image.png",
+                  CacheNetworkImage(
+                    imageUrl: movieDetails.image,
                     height: 140,
                     width: 100,
                     fit: BoxFit.fill,
                   ),
                   Text(
-                    "Spiderman No Way Home",
+                    movieDetails.title,
                     textAlign: .left,
                     style: TextStyle(
                       fontSize: 20,
@@ -76,7 +82,7 @@ class ViewMovieWidget extends StatelessWidget {
             children: [
               IteamRowIconTextWidget(
                 iconPath: AssetsIcon.calendar_blank_icon,
-                text: "2020",
+                text: movieDetails.publishDate,
               ),
               SizedBox(
                 height: 20,
@@ -89,7 +95,7 @@ class ViewMovieWidget extends StatelessWidget {
 
               IteamRowIconTextWidget(
                 iconPath: AssetsIcon.clock_icon,
-                text: "148 Minutes",
+                text: movieDetails.timeOfMovie,
               ),
               SizedBox(
                 height: 20,
@@ -102,7 +108,7 @@ class ViewMovieWidget extends StatelessWidget {
 
               IteamRowIconTextWidget(
                 iconPath: AssetsIcon.type_movie_icon,
-                text: "Action",
+                text: movieDetails.category,
               ),
             ],
           ),
@@ -111,7 +117,7 @@ class ViewMovieWidget extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
           child: Text(
-            "From DC Comics comes the Suicide Squad, an antihero team of incarcerated supervillains who act as deniable assets for the United States government, undertaking high-risk black ops missions in exchange for commuted prison sentences.",
+            movieDetails.description,
             style: TextStyle(
               fontSize: 12,
               fontWeight: .w400,

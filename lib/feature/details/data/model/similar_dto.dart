@@ -64,6 +64,7 @@ class Results {
       image: !(posterPath == null)
           ? "https://image.tmdb.org/t/p/w500$posterPath"
           : "",
+      id: id ?? 0,
     );
   }
 

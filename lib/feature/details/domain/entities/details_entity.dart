@@ -7,6 +7,7 @@ class DetailsEntity {
     required this.timeOfMovie,
     required this.title,
     required this.description,
+    required this.voteAverage,
   });
 
   String coverImage;
@@ -16,4 +17,5 @@ class DetailsEntity {
   String timeOfMovie;
   String title;
   String description;
+  double voteAverage;
 }

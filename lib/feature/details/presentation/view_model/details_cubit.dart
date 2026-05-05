@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/rendering.dart';
 import 'package:meta/meta.dart';
 import 'package:movie_app/core/network/result_api.dart';
 import 'package:movie_app/feature/details/domain/entities/details_entity.dart';
@@ -15,7 +16,7 @@ class DetailsCubit extends Cubit<DetailsState> {
 
   final GetDetailsUseCase _details;
   final GetSimilarUseCase _similar;
-  final int id;
+  int id;
   Future<void> getDetails() async {
     emit(DetailsLoadingState());
     final result = await _details.invoke(id);
@@ -38,6 +39,12 @@ class DetailsCubit extends Cubit<DetailsState> {
       case ErrorApi<List<SimilarEntity>>():
         emit(SimilarErrorState(result.errorMassage));
     }
+  }
+
+  Future<void> ubdatMovie(int id) async {
+    this.id = id;
+    getDetails();
+    getSimilar();
   }
 }
 
