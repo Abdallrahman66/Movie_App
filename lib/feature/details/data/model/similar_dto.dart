@@ -60,7 +60,11 @@ class Results {
   int? voteCount;
 
   SimilarEntity toEntity() {
-    return SimilarEntity(image: posterPath ?? '');
+    return SimilarEntity(
+      image: !(posterPath == null)
+          ? "https://image.tmdb.org/t/p/w500$posterPath"
+          : "",
+    );
   }
 
   Results.fromJson(Map<String, dynamic> json) {

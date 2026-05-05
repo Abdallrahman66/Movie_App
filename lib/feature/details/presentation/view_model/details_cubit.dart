@@ -10,15 +10,18 @@ part 'details_state.dart';
 
 class DetailsCubit extends Cubit<DetailsState> {
   DetailsCubit(this._details, this._similar, this.id) : super(DetailsInitial());
+  late final DetailsEntity movie;
+  late final List<SimilarEntity> similarMovies;
+
   final GetDetailsUseCase _details;
   final GetSimilarUseCase _similar;
-
-  int id;
+  final int id;
   Future<void> getDetails() async {
     emit(DetailsLoadingState());
     final result = await _details.invoke(id);
     switch (result) {
       case SuccessApi<DetailsEntity>():
+        movie = result.data;
         emit(DetailsSuccessState());
       case ErrorApi<DetailsEntity>():
         emit(DetailsErrorState(result.errorMassage));
@@ -30,6 +33,7 @@ class DetailsCubit extends Cubit<DetailsState> {
     final result = await _similar.invoke(id);
     switch (result) {
       case SuccessApi<List<SimilarEntity>>():
+        similarMovies = result.data;
         emit(SimilarSuccessState());
       case ErrorApi<List<SimilarEntity>>():
         emit(SimilarErrorState(result.errorMassage));

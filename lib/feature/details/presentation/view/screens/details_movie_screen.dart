@@ -9,6 +9,7 @@ import 'package:movie_app/feature/details/presentation/view/widgets/view_movie_w
 class DetailsMovieScreen extends StatelessWidget {
   const DetailsMovieScreen({super.key});
   static const String routeName = "DetailsMovieScreen";
+  // final int id;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,7 @@ class DetailsMovieScreen extends StatelessWidget {
         actions: [CustomActionBookmark()],
         leading: Image.asset(AssetsIcon.back_button_icon),
       ),
+
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(child: ViewMovieWidget()),

@@ -61,11 +61,15 @@ class DetailsDto {
 
   DetailsEntity toEntity() {
     return DetailsEntity(
-      coverImage: backdropPath ?? '',
+      coverImage: !(backdropPath == null)
+          ? "https://image.tmdb.org/t/p/w500$backdropPath"
+          : 'assets/images/cover.png',
 
-      image: posterPath ?? '',
+      image: !(posterPath == null)
+          ? "https://image.tmdb.org/t/p/w500$posterPath"
+          : "assets/images/image.png",
 
-      publishDate: releaseDate ?? "",
+      publishDate: releaseDate?.split(' ').first ?? "0000",
 
       category: (genres != null && genres!.isNotEmpty)
           ? genres![0].name ?? 'Uncategorized'
