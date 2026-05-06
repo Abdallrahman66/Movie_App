@@ -39,7 +39,12 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen> {
       appBar: CustomAppBar(
         title: "Detail",
         actions: [CustomActionBookmark(id: widget.id)],
-        leading: Image.asset(AssetsIcon.back_button_icon),
+        leading: InkWell(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: Image.asset(AssetsIcon.back_button_icon),
+        ),
       ),
 
       body: CustomScrollView(
