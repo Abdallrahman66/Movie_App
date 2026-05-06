@@ -38,7 +38,7 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen> {
       backgroundColor: AppColor.backgroundColor,
       appBar: CustomAppBar(
         title: "Detail",
-        actions: [CustomActionBookmark()],
+        actions: [CustomActionBookmark(id: widget.id)],
         leading: Image.asset(AssetsIcon.back_button_icon),
       ),
 
