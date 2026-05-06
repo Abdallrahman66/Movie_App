@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         SearchScreen.routeName: (context) => const SearchScreen(),
         InvalidSearchScreen.routeName: (context) => const InvalidSearchScreen(),
         DetailsMovieScreen.routeName: (context) =>
-            DetailsMovieScreen(id: 254473),
+            const DetailsMovieScreen(id: 254473),
         WatchList.routeName: (context) => const WatchList(),
       },
     );

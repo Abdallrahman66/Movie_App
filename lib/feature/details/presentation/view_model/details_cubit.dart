@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:flutter/rendering.dart';
 import 'package:meta/meta.dart';
 import 'package:movie_app/core/network/result_api.dart';
 import 'package:movie_app/feature/details/domain/entities/details_entity.dart';

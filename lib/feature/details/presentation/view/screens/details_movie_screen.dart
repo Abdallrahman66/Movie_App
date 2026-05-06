@@ -11,9 +11,9 @@ import 'package:movie_app/feature/details/presentation/view/widgets/view_movie_w
 import 'package:movie_app/feature/details/presentation/view_model/details_cubit.dart';
 
 class DetailsMovieScreen extends StatefulWidget {
-  DetailsMovieScreen({super.key, required this.id});
+  const DetailsMovieScreen({super.key, required this.id});
   static const String routeName = "DetailsMovieScreen";
-  int id;
+  final int id;
   @override
   State<DetailsMovieScreen> createState() => _DetailsMovieScreenState();
 }
