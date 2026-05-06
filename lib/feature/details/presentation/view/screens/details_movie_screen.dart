@@ -20,7 +20,6 @@ class DetailsMovieScreen extends StatefulWidget {
 
 class _DetailsMovieScreenState extends State<DetailsMovieScreen> {
   late DetailsCubit _cubit;
-  final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -48,7 +47,6 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen> {
       ),
 
       body: CustomScrollView(
-        controller: _scrollController,
         slivers: [
           BlocBuilder<DetailsCubit, DetailsState>(
             bloc: _cubit,

@@ -6,7 +6,6 @@ import 'package:movie_app/feature/details/data/model/similar_dto.dart';
 
 class DetailsApi {
   Future<ResultApi<DetailsDto>> getDetails(int id) async {
-    // api.themoviedb.org/3/movie/1419406?api_key=9d7f94be913eddf2db40e317d2f12f36
     try {
       final Uri url = Uri.https("api.themoviedb.org", "/3/movie/$id", {
         'api_key': "9d7f94be913eddf2db40e317d2f12f36",
@@ -25,7 +24,6 @@ class DetailsApi {
   }
 
   Future<ResultApi<SimilarDto>> getSimilar(int id) async {
-    // api.themoviedb.org/3/movie/1419406/similar?api_key=9d7f94be913eddf2db40e317d2f12f36
     try {
       final Uri url = Uri.https("api.themoviedb.org", "/3/movie/$id/similar", {
         'api_key': "9d7f94be913eddf2db40e317d2f12f36",

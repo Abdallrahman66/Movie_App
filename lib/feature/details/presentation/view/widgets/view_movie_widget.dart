@@ -113,7 +113,6 @@ class ViewMovieWidget extends StatelessWidget {
             ],
           ),
         ),
-        // SizedBox(height: ,),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
           child: Text(
