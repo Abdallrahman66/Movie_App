@@ -33,7 +33,7 @@ class DetailsDto {
 
   bool? adult;
   String? backdropPath;
-  Null belongsToCollection;
+  BelongsToCollection? belongsToCollection;
   int? budget;
   List<Genres>? genres;
   String? homepage;
@@ -63,11 +63,11 @@ class DetailsDto {
     return DetailsEntity(
       coverImage: !(backdropPath == null)
           ? "https://image.tmdb.org/t/p/w500$backdropPath"
-          : 'assets/images/cover.png',
+          : 'https://img.pikbest.com/backgrounds/20190729/white-wrinkled-paper-background-image_2769903.jpg!w700wp',
 
       image: !(posterPath == null)
           ? "https://image.tmdb.org/t/p/w500$posterPath"
-          : "assets/images/image.png",
+          : "https://img.pikbest.com/backgrounds/20190729/white-wrinkled-paper-background-image_2769903.jpg!w700wp",
 
       publishDate: releaseDate?.split('-').first ?? "0000",
 
@@ -87,7 +87,9 @@ class DetailsDto {
   DetailsDto.fromJson(Map<String, dynamic> json) {
     adult = json['adult'];
     backdropPath = json['backdrop_path'];
-    belongsToCollection = json['belongs_to_collection'];
+    belongsToCollection = json['belongs_to_collection'] != null
+        ? BelongsToCollection.fromJson(json['belongs_to_collection'])
+        : null;
     budget = json['budget'];
     if (json['genres'] != null) {
       genres = <Genres>[];
@@ -132,6 +134,22 @@ class DetailsDto {
     video = json['video'];
     voteAverage = json['vote_average'];
     voteCount = json['vote_count'];
+  }
+}
+
+class BelongsToCollection {
+  int? id;
+  String? name;
+  String? posterPath;
+  String? backdropPath;
+
+  BelongsToCollection({this.id, this.name, this.posterPath, this.backdropPath});
+
+  BelongsToCollection.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    posterPath = json['poster_path'];
+    backdropPath = json['backdrop_path'];
   }
 }
 

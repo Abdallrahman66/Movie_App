@@ -11,11 +11,12 @@ part 'details_state.dart';
 
 class DetailsCubit extends Cubit<DetailsState> {
   DetailsCubit(this._details, this._similar, this.id) : super(DetailsInitial());
+  final GetDetailsUseCase _details;
+  final GetSimilarUseCase _similar;
+
   late final DetailsEntity movie;
   late final List<SimilarEntity> similarMovies;
 
-  final GetDetailsUseCase _details;
-  final GetSimilarUseCase _similar;
   int id;
   Future<void> getDetails() async {
     emit(DetailsLoadingState());
@@ -41,10 +42,9 @@ class DetailsCubit extends Cubit<DetailsState> {
     }
   }
 
-  Future<void> ubdatMovie(int id) async {
+  Future<void> getData(int id) async {
     this.id = id;
-    getDetails();
-    getSimilar();
+    await Future.wait([getDetails(), getSimilar()]);
   }
 }
 

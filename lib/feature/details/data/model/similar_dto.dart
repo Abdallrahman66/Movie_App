@@ -63,7 +63,7 @@ class Results {
     return SimilarEntity(
       image: !(posterPath == null)
           ? "https://image.tmdb.org/t/p/w500$posterPath"
-          : "",
+          : "https://img.pikbest.com/backgrounds/20190729/white-wrinkled-paper-background-image_2769903.jpg!w700wp",
       id: id ?? 0,
     );
   }

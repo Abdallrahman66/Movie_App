@@ -89,7 +89,7 @@ class ViewMovieWidget extends StatelessWidget {
                 child: VerticalDivider(
                   color: Color(0xff92929D),
                   thickness: 1,
-                  width: 40,
+                  width: 20,
                 ),
               ),
 

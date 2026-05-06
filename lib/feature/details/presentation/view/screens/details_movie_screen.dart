@@ -11,15 +11,14 @@ import 'package:movie_app/feature/details/presentation/view/widgets/view_movie_w
 import 'package:movie_app/feature/details/presentation/view_model/details_cubit.dart';
 
 class DetailsMovieScreen extends StatefulWidget {
-  const DetailsMovieScreen({super.key});
+  DetailsMovieScreen({super.key, required this.id});
   static const String routeName = "DetailsMovieScreen";
-
+  int id;
   @override
   State<DetailsMovieScreen> createState() => _DetailsMovieScreenState();
 }
 
 class _DetailsMovieScreenState extends State<DetailsMovieScreen> {
-  int id = 254473;
   late DetailsCubit _cubit;
   final ScrollController _scrollController = ScrollController();
   @override
@@ -28,10 +27,9 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen> {
     _cubit = DetailsCubit(
       getDetailsUseCaseInject(),
       getSimilarUseCaseInject(),
-      id,
+      widget.id,
     );
-    _cubit.getDetails();
-    _cubit.getSimilar();
+    _cubit.getData(widget.id);
   }
 
   @override
@@ -67,7 +65,17 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen> {
               if (state is DetailsErrorState) {
                 return SliverFillRemaining(
                   hasScrollBody: false,
-                  child: Center(child: Text(state.error)),
+                  child: Center(
+                    child: Text(
+                      state.error,
+                      textAlign: .center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: .w400,
+                        color: Color(0xffFFFFFF),
+                      ),
+                    ),
+                  ),
                 );
               }
               return SliverToBoxAdapter(child: SizedBox.shrink());
@@ -116,11 +124,14 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen> {
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
-                          _cubit.ubdatMovie(_cubit.similarMovies[index].id);
-                          _scrollController.animateTo(
-                            0,
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.easeInOut,
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return DetailsMovieScreen(
+                                  id: _cubit.similarMovies[index].id,
+                                );
+                              },
+                            ),
                           );
                         },
                         child: ClipRRect(

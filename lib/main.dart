@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
         HomeScreen.routeName: (context) => const HomeScreen(),
         SearchScreen.routeName: (context) => const SearchScreen(),
         InvalidSearchScreen.routeName: (context) => const InvalidSearchScreen(),
-        DetailsMovieScreen.routeName: (context) => const DetailsMovieScreen(),
+        DetailsMovieScreen.routeName: (context) =>
+            DetailsMovieScreen(id: 254473),
         WatchList.routeName: (context) => const WatchList(),
       },
     );
