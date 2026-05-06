@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/app_section/app_section_view.dart';
-import 'package:movie_app/feature/details/presentation/view/details_movie_screen.dart';
+import 'package:movie_app/feature/details/presentation/view/screens/details_movie_screen.dart';
 import 'package:movie_app/feature/home/presentation/view/home_screen.dart';
 import 'package:movie_app/feature/search/presentation/view/Search_screen.dart';
 import 'package:movie_app/feature/search/presentation/view/invalid_search_screen.dart';
@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
         HomeScreen.routeName: (context) => const HomeScreen(),
         SearchScreen.routeName: (context) => const SearchScreen(),
         InvalidSearchScreen.routeName: (context) => const InvalidSearchScreen(),
-        DetailsMovieScreen.routeName: (context) => const DetailsMovieScreen(),
+        DetailsMovieScreen.routeName: (context) =>
+            const DetailsMovieScreen(id: 254473),
         WatchList.routeName: (context) => const WatchList(),
       },
     );
