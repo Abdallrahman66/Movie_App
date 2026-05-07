@@ -7,6 +7,11 @@ abstract class HomeState {}
 class HomeInitial extends HomeState {}
 
 class HomeLoading extends HomeState {}
+// class HomeRecommendedLoading extends HomeState {}
+
+// class HomePopolureLoading extends HomeState {}
+
+// class HomeReleasesLoading extends HomeState {}
 
 class HomeRecommendedSuccesses extends HomeState {
   HomeRecommendedSuccesses(this.recommendedMovieEntity);

@@ -3,35 +3,74 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_app/core/di/service_locatore.dart';
 import 'package:movie_app/core/utils/app_colors.dart';
 import 'package:movie_app/core/widgets/cache_networkImage_widget.dart';
+
 import 'package:movie_app/feature/details/presentation/view/details_movie_screen.dart';
 import 'package:movie_app/feature/home/presentation/view_model/home_cubit.dart';
+import 'package:movie_app/feature/home/presentation/widget/home_loading_shimmer.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   static const String routeName = "HomeScreen";
 
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  List recommended = [];
+  List popular = [];
+  List releases = [];
+  bool isLoading = true;
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<HomeCubit>()..getRecommendedMovie(),
+      create: (context) => getIt<HomeCubit>()
+        ..getRecommendedMovie()
+        ..getPopolureMovie()
+        ..getReleasesMovie(),
+
       child: Scaffold(
-        backgroundColor:  AppColor.backgroundColor,
+        backgroundColor: AppColor.backgroundColor,
+
         appBar: AppBar(backgroundColor: AppColor.backgroundColor),
-        body: BlocBuilder<HomeCubit, HomeState>(
-          builder: (context, state) {
-            if (state is HomeLoading) {
-              return  Center(child: SizedBox());
+
+        body: BlocListener<HomeCubit, HomeState>(
+          listener: (context, state) {
+            if (state is HomeRecommendedSuccesses) {
+              recommended = state.recommendedMovieEntity.results;
             }
 
-            if (state is HomeSuccesses) {
-              final recommended = state.recommendedMovieEntity.results;
-              final popular = state.recommendedMovieEntity.results;
-              final releases = state.recommendedMovieEntity.results;
+            if (state is HomePopolureSuccesses) {
+              popular = state.popolureMovieEntity.results;
+            }
+
+            if (state is HomeReleasesSuccesses) {
+              releases = state.releasesMovieEntity.results;
+            }
+
+            if (recommended.isNotEmpty ||
+                popular.isNotEmpty ||
+                releases.isNotEmpty) {
+               isLoading = false;
+            }
+
+            setState(() {});
+          },
+
+          child: BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              if (isLoading &&
+                  recommended.isEmpty &&
+                  popular.isEmpty &&
+                  releases.isEmpty) {
+                return  Center(child: HomeLoadingShimmer());
+              }
 
               return CustomScrollView(
                 slivers: [
-                  
+                 
                   SliverToBoxAdapter(
                     child: Padding(
                       padding:  EdgeInsets.symmetric(
@@ -58,9 +97,7 @@ class HomeScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final movie = recommended[index];
 
-                          final imageUrl = movie.posterPath.isNotEmpty
-                              ? "https://image.tmdb.org/t/p/w500${movie.posterPath}"
-                              : "https://via.placeholder.com/150"; //!  
+                         
 
                           return GestureDetector(
                             onTap: () {
@@ -74,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                               width: 160,
                               margin:  EdgeInsets.all(10),
                               child: CacheNetworkImage(
-                                imageUrl: imageUrl,
+                                imageUrl: movie.posterPath,
                                 fit: .cover,
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -94,7 +131,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       child: Text(
                         "Popular",
-                        style:  TextStyle(
+                        style: TextStyle(
                           color: AppColor.primaryTextColor,
                           fontSize: 22,
                           fontWeight: .bold,
@@ -112,9 +149,6 @@ class HomeScreen extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final movie = popular[index];
 
-                          final imageUrl = movie.posterPath.isNotEmpty
-                              ? "https://image.tmdb.org/t/p/w500${movie.posterPath}"
-                              : "https://via.placeholder.com/150";
 
                           return GestureDetector(
                             onTap: () {
@@ -126,10 +160,10 @@ class HomeScreen extends StatelessWidget {
                             },
                             child: Container(
                               width: 160,
-                              margin: const EdgeInsets.all(10),
+                              margin:  EdgeInsets.all(10),
                               child: CacheNetworkImage(
-                                imageUrl: imageUrl,
-                                fit: BoxFit.cover,
+                                imageUrl: movie.posterPath,
+                                fit: .cover,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
@@ -139,7 +173,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
 
-                  
+                
                   SliverToBoxAdapter(
                     child: Padding(
                       padding:  EdgeInsets.symmetric(
@@ -148,7 +182,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       child: Text(
                         "Releases",
-                        style:  TextStyle(
+                        style: TextStyle(
                           color: AppColor.primaryTextColor,
                           fontSize: 22,
                           fontWeight: .bold,
@@ -164,11 +198,10 @@ class HomeScreen extends StatelessWidget {
                         scrollDirection: .horizontal,
                         itemCount: releases.length,
                         itemBuilder: (context, index) {
+
                           final movie = releases[index];
 
-                          final imageUrl = movie.posterPath.isNotEmpty
-                              ? "https://image.tmdb.org/t/p/w500${movie.posterPath}"
-                              : "https://via.placeholder.com/150";
+                       
 
                           return GestureDetector(
                             onTap: () {
@@ -182,7 +215,7 @@ class HomeScreen extends StatelessWidget {
                               width: 160,
                               margin:  EdgeInsets.all(10),
                               child: CacheNetworkImage(
-                                imageUrl: imageUrl,
+                                imageUrl: movie.posterPath,
                                 fit: .cover,
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -194,19 +227,8 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               );
-            }
-
-            if (state is HomeError) {
-              return Center(
-                child: Text(
-                  state.messageError,
-                  style:  TextStyle(color: Color(0xffffffff)),
-                ),
-              );
-            }
-
-            return SizedBox();
-          },
+            },
+          ),
         ),
       ),
     );

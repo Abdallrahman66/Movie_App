@@ -24,7 +24,7 @@ extension ResultsRecommendedMapper on ResultsRecommendedDto {
       originalTitle: originalTitle ?? "",
       overview: overview ?? "",
       popularity: popularity ?? 0.0,
-      posterPath: posterPath ?? "",
+      posterPath: "https://image.tmdb.org/t/p/w500${posterPath ?? ""}",
       releaseDate: releaseDate ?? "",
       softcore: softcore ?? false,
       video: video ?? false,

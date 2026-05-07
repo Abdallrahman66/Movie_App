@@ -45,7 +45,7 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  Future<void> getReleasesMovieUseCase() async {
+  Future<void> getReleasesMovie() async {
     emit(HomeLoading());
     final result = await _getReleasesMovieUseCase.invoke();
 
