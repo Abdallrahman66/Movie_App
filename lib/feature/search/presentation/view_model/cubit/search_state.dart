@@ -1,4 +1,5 @@
-import 'package:movie_app/feature/search/domain/entities/movie_entity.dart';
+part of 'search_cubit.dart';
+
 
 sealed class SearchState {}
 
