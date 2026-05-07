@@ -1,21 +1,21 @@
-class RecommendedMovieDto {
-  RecommendedMovieDto({
+class PopolureMovieDto {
+  PopolureMovieDto({
     this.page,
     this.results,
     this.totalPages,
     this.totalResults,
   });
   int? page;
-  List<ResultsRecommendedDto>? results;
+  List<ResultsPopoluredto>? results;
   int? totalPages;
   int? totalResults;
 
-  RecommendedMovieDto.fromJson(Map<String, dynamic> json) {
+  PopolureMovieDto.fromJson(Map<String, dynamic> json) {
     page = json['page'];
     if (json['results'] != null) {
-      results = <ResultsRecommendedDto>[];
+      results = <ResultsPopoluredto>[];
       json['results'].forEach((v) {
-        results!.add(new ResultsRecommendedDto.fromJson(v));
+        results!.add(new ResultsPopoluredto.fromJson(v));
       });
     }
     totalPages = json['total_pages'];
@@ -32,10 +32,12 @@ class RecommendedMovieDto {
   //   data['total_results'] = this.totalResults;
   //   return data;
   // }
+
+
 }
 
-class ResultsRecommendedDto {
-  ResultsRecommendedDto({
+class ResultsPopoluredto {
+  ResultsPopoluredto({
     this.adult,
     this.backdropPath,
     this.genreIds,
@@ -52,6 +54,7 @@ class ResultsRecommendedDto {
     this.voteAverage,
     this.voteCount,
   });
+
   bool? adult;
   String? backdropPath;
   List<int>? genreIds;
@@ -68,7 +71,7 @@ class ResultsRecommendedDto {
   double? voteAverage;
   int? voteCount;
 
-  ResultsRecommendedDto.fromJson(Map<String, dynamic> json) {
+  ResultsPopoluredto.fromJson(Map<String, dynamic> json) {
     adult = json['adult'];
     backdropPath = json['backdrop_path'];
     genreIds = json['genre_ids'].cast<int>();
@@ -105,4 +108,5 @@ class ResultsRecommendedDto {
   //   data['vote_count'] = this.voteCount;
   //   return data;
   // }
+
 }

@@ -1,20 +1,21 @@
-import 'package:movie_app/feature/home/data/model/recommended_movie_dto.dart';
-import 'package:movie_app/feature/home/domain/entity/recommended_movie_entity.dart';
+import 'package:movie_app/feature/home/data/model/popolure_movie_dto.dart';
 
-extension RecommendedMovieMapper on RecommendedMovieDto {
-  RecommendedMovieEntity toEntity() {
-    return RecommendedMovieEntity(
+import 'package:movie_app/feature/home/domain/entity/popular_movie_entity.dart';
+
+extension PopolureMovieMapper on PopolureMovieDto {
+  PopolureMovieEntity toEntity() {
+    return PopolureMovieEntity(
       page: page ?? 0,
+      results: results?.map((e) => e.toEntity()).toList() ?? [],
       totalPages: totalPages ?? 0,
       totalResults: totalResults ?? 0,
-      results: results?.map((e) => e.toEntity()).toList() ?? [],
     );
   }
 }
 
-extension ResultsRecommendedMapper on ResultsRecommendedDto {
-  ResultsRecommendedEntity toEntity() {
-    return ResultsRecommendedEntity(
+extension ResultsPopolureMapper on ResultsPopoluredto {
+  ResultsPopolureEntity toEntity() {
+    return ResultsPopolureEntity(
       adult: adult ?? false,
       backdropPath: backdropPath ?? "",
       genreIds: genreIds ?? [],

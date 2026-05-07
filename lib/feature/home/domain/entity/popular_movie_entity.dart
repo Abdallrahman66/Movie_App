@@ -1,18 +1,18 @@
-class RecommendedMovieEntity {
-  const RecommendedMovieEntity({
+class PopolureMovieEntity {
+  PopolureMovieEntity({
     this.page = 0,
     this.results = const [],
     this.totalPages = 0,
     this.totalResults = 0,
   });
   final int page;
-  final List<ResultsRecommendedEntity> results;
+  final List<ResultsPopolureEntity> results;
   final int totalPages;
   final int totalResults;
 }
 
-class ResultsRecommendedEntity {
-  const ResultsRecommendedEntity({
+class ResultsPopolureEntity {
+  ResultsPopolureEntity({
     this.adult = false,
     this.backdropPath = "",
     this.genreIds = const [],
@@ -43,5 +43,5 @@ class ResultsRecommendedEntity {
   final bool softcore;
   final bool video;
   final double voteAverage;
-  final int voteCount;
+  final int? voteCount;
 }

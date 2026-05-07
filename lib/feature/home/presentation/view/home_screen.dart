@@ -16,12 +16,12 @@ class HomeScreen extends StatelessWidget {
     return BlocProvider(
       create: (context) => getIt<HomeCubit>()..getRecommendedMovie(),
       child: Scaffold(
-        backgroundColor: const Color(0xff111114),
-        appBar: AppBar(backgroundColor: const Color(0xff111114)),
+        backgroundColor:  AppColor.backgroundColor,
+        appBar: AppBar(backgroundColor: AppColor.backgroundColor),
         body: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
             if (state is HomeLoading) {
-              return const Center(child: SizedBox());
+              return  Center(child: SizedBox());
             }
 
             if (state is HomeSuccesses) {
@@ -31,10 +31,10 @@ class HomeScreen extends StatelessWidget {
 
               return CustomScrollView(
                 slivers: [
-                  /// Recommended
+                  
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
+                      padding:  EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 10,
                       ),
@@ -43,7 +43,7 @@ class HomeScreen extends StatelessWidget {
                         style: TextStyle(
                           color: AppColor.primaryTextColor,
                           fontSize: 22,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: .bold,
                         ),
                       ),
                     ),
@@ -53,14 +53,14 @@ class HomeScreen extends StatelessWidget {
                     child: SizedBox(
                       height: 260,
                       child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
+                        scrollDirection: .horizontal,
                         itemCount: recommended.length,
                         itemBuilder: (context, index) {
                           final movie = recommended[index];
 
                           final imageUrl = movie.posterPath.isNotEmpty
                               ? "https://image.tmdb.org/t/p/w500${movie.posterPath}"
-                              : "https://via.placeholder.com/150";
+                              : "https://via.placeholder.com/150"; //!  
 
                           return GestureDetector(
                             onTap: () {
@@ -72,10 +72,10 @@ class HomeScreen extends StatelessWidget {
                             },
                             child: Container(
                               width: 160,
-                              margin: const EdgeInsets.all(10),
+                              margin:  EdgeInsets.all(10),
                               child: CacheNetworkImage(
                                 imageUrl: imageUrl,
-                                fit: BoxFit.cover,
+                                fit: .cover,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
@@ -85,19 +85,19 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
 
-                  /// Popular
+                  
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
+                      padding:  EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 10,
                       ),
                       child: Text(
                         "Popular",
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style:  TextStyle(
+                          color: AppColor.primaryTextColor,
                           fontSize: 22,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: .bold,
                         ),
                       ),
                     ),
@@ -107,7 +107,7 @@ class HomeScreen extends StatelessWidget {
                     child: SizedBox(
                       height: 260,
                       child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
+                        scrollDirection: .horizontal,
                         itemCount: popular.length,
                         itemBuilder: (context, index) {
                           final movie = popular[index];
@@ -139,19 +139,19 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
 
-                  /// Releases
+                  
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
+                      padding:  EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 10,
                       ),
                       child: Text(
                         "Releases",
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style:  TextStyle(
+                          color: AppColor.primaryTextColor,
                           fontSize: 22,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: .bold,
                         ),
                       ),
                     ),
@@ -161,7 +161,7 @@ class HomeScreen extends StatelessWidget {
                     child: SizedBox(
                       height: 260,
                       child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
+                        scrollDirection: .horizontal,
                         itemCount: releases.length,
                         itemBuilder: (context, index) {
                           final movie = releases[index];
@@ -180,10 +180,10 @@ class HomeScreen extends StatelessWidget {
                             },
                             child: Container(
                               width: 160,
-                              margin: const EdgeInsets.all(10),
+                              margin:  EdgeInsets.all(10),
                               child: CacheNetworkImage(
                                 imageUrl: imageUrl,
-                                fit: BoxFit.cover,
+                                fit: .cover,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
@@ -200,7 +200,7 @@ class HomeScreen extends StatelessWidget {
               return Center(
                 child: Text(
                   state.messageError,
-                  style: const TextStyle(color: Colors.white),
+                  style:  TextStyle(color: Color(0xffffffff)),
                 ),
               );
             }

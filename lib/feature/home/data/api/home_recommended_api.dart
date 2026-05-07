@@ -5,14 +5,14 @@ import 'package:movie_app/core/network/result_api.dart';
 import 'package:movie_app/feature/home/data/model/recommended_movie_dto.dart';
 
 @singleton
-class HomeApi {
+class HomeRecommendedApi {
   Future<ResultApi<RecommendedMovieDto>> getRecommendedMovie() async {
     try {
       var url = Uri.https("api.themoviedb.org", "/3/movie/top_rated", {
         "api_key": "9d7f94be913eddf2db40e317d2f12f36",
       });
 
-      final response = await http.get(url).timeout(const Duration(seconds: 10));
+      final response = await http.get(url);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         final json = jsonDecode(response.body);

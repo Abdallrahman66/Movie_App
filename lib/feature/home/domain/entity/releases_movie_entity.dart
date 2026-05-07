@@ -1,18 +1,26 @@
-class RecommendedMovieEntity {
-  const RecommendedMovieEntity({
+class ReleasesMovieEntity {
+  ReleasesMovieEntity({
+    this.dates = const ReleasesDates(),
     this.page = 0,
     this.results = const [],
     this.totalPages = 0,
     this.totalResults = 0,
   });
+  final ReleasesDates dates;
   final int page;
-  final List<ResultsRecommendedEntity> results;
+  final List<ResultReleasesEntity> results;
   final int totalPages;
   final int totalResults;
 }
 
-class ResultsRecommendedEntity {
-  const ResultsRecommendedEntity({
+class ReleasesDates {
+  const ReleasesDates({this.maximum = "", this.minimum = ""});
+  final String maximum;
+  final String minimum;
+}
+
+class ResultReleasesEntity {
+  ResultReleasesEntity({
     this.adult = false,
     this.backdropPath = "",
     this.genreIds = const [],

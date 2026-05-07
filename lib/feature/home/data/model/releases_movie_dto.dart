@@ -1,21 +1,25 @@
-class RecommendedMovieDto {
-  RecommendedMovieDto({
+class ReleasesMovieDto {
+  ReleasesMovieDto({
+    this.dates,
     this.page,
     this.results,
     this.totalPages,
     this.totalResults,
   });
+  ReleasesDatesDto? dates;
   int? page;
-  List<ResultsRecommendedDto>? results;
+  List<ResultReleasesDto>? results;
   int? totalPages;
   int? totalResults;
 
-  RecommendedMovieDto.fromJson(Map<String, dynamic> json) {
+
+  ReleasesMovieDto.fromJson(Map<String, dynamic> json) {
+    dates = json['dates'] != null ? new ReleasesDatesDto.fromJson(json['dates']) : null;
     page = json['page'];
     if (json['results'] != null) {
-      results = <ResultsRecommendedDto>[];
+      results = <ResultReleasesDto>[];
       json['results'].forEach((v) {
-        results!.add(new ResultsRecommendedDto.fromJson(v));
+        results!.add(new ResultReleasesDto.fromJson(v));
       });
     }
     totalPages = json['total_pages'];
@@ -24,6 +28,9 @@ class RecommendedMovieDto {
 
   // Map<String, dynamic> toJson() {
   //   final Map<String, dynamic> data = new Map<String, dynamic>();
+  //   if (this.dates != null) {
+  //     data['dates'] = this.dates!.toJson();
+  //   }
   //   data['page'] = this.page;
   //   if (this.results != null) {
   //     data['results'] = this.results!.map((v) => v.toJson()).toList();
@@ -34,8 +41,27 @@ class RecommendedMovieDto {
   // }
 }
 
-class ResultsRecommendedDto {
-  ResultsRecommendedDto({
+class ReleasesDatesDto {
+  ReleasesDatesDto({this.maximum, this.minimum});
+  String? maximum;
+  String? minimum;
+
+
+  ReleasesDatesDto.fromJson(Map<String, dynamic> json) {
+    maximum = json['maximum'];
+    minimum = json['minimum'];
+  }
+
+  // Map<String, dynamic> toJson() {
+  //   final Map<String, dynamic> data = new Map<String, dynamic>();
+  //   data['maximum'] = this.maximum;
+  //   data['minimum'] = this.minimum;
+  //   return data;
+  // }
+}
+
+class ResultReleasesDto {
+  ResultReleasesDto({
     this.adult,
     this.backdropPath,
     this.genreIds,
@@ -68,7 +94,8 @@ class ResultsRecommendedDto {
   double? voteAverage;
   int? voteCount;
 
-  ResultsRecommendedDto.fromJson(Map<String, dynamic> json) {
+
+  ResultReleasesDto.fromJson(Map<String, dynamic> json) {
     adult = json['adult'];
     backdropPath = json['backdrop_path'];
     genreIds = json['genre_ids'].cast<int>();

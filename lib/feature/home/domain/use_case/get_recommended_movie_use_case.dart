@@ -14,7 +14,3 @@ class GetRecommendedMovieUseCase {
       _repo.getRecommendedMovie();
 }
 
-// GetRecommendedMovieUseCase getRecommendedMovieUseCaseInjectable() =>
-//     GetRecommendedMovieUseCase(
-//       recommendedRepositoryInjectable()
-//        );
