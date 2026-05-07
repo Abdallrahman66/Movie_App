@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:movie_app/core/network/result_api.dart';
-import 'package:movie_app/feature/home/domain/entity/popular_movie_entity.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
 import 'package:movie_app/feature/home/domain/repo/data_source/popolure_data_source_interface.dart';
 import 'package:movie_app/feature/home/domain/repo/repository/popolure_repository_interface.dart';
 
@@ -10,6 +11,6 @@ class HomePopolureRepositoryImp implements PopolureRepositoryInterface {
   final PopolureDataSourceInterface _dataSource;
 
   @override
-  Future<ResultApi<PopolureMovieEntity>> getPopolureMovie() =>
+  Future<ResultApi<HomeMovieEntity>> getPopolureMovie() =>
       _dataSource.getPopolureMovie();
 }

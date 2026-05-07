@@ -15,16 +15,16 @@ class HomeLoading extends HomeState {}
 
 class HomeRecommendedSuccesses extends HomeState {
   HomeRecommendedSuccesses(this.recommendedMovieEntity);
-  final RecommendedMovieEntity recommendedMovieEntity;
+  final HomeMovieEntity recommendedMovieEntity;
 }
 
 class HomePopolureSuccesses extends HomeState {
   HomePopolureSuccesses(this.popolureMovieEntity);
-  final PopolureMovieEntity popolureMovieEntity;
+  final HomeMovieEntity popolureMovieEntity;
 }
 class HomeReleasesSuccesses extends HomeState {
   HomeReleasesSuccesses(this.releasesMovieEntity);
-  final ReleasesMovieEntity releasesMovieEntity;
+  final HomeMovieEntity releasesMovieEntity;
 }
 
 

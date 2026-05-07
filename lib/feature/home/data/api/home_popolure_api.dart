@@ -8,7 +8,6 @@ import 'package:movie_app/feature/home/data/model/popolure_movie_dto.dart';
 class HomePopularApi {
   Future<ResultApi<PopolureMovieDto>> getPopularMovie() async {
     try {
-     
       var url = Uri.https("api.themoviedb.org", "/3/movie/popular", {
         "api_key": "9d7f94be913eddf2db40e317d2f12f36",
       });

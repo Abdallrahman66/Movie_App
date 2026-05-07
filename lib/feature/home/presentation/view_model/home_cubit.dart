@@ -2,9 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 import 'package:movie_app/core/network/result_api.dart';
-import 'package:movie_app/feature/home/domain/entity/popular_movie_entity.dart';
-import 'package:movie_app/feature/home/domain/entity/recommended_movie_entity.dart';
-import 'package:movie_app/feature/home/domain/entity/releases_movie_entity.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
 import 'package:movie_app/feature/home/domain/use_case/get_popolure_movie_use_case.dart';
 import 'package:movie_app/feature/home/domain/use_case/get_recommended_movie_use_case.dart';
 import 'package:movie_app/feature/home/domain/use_case/get_releases_movie_use_case.dart';
@@ -26,9 +25,9 @@ class HomeCubit extends Cubit<HomeState> {
     final result = await _getRecommendedMovieUseCase.invoke();
 
     switch (result) {
-      case SuccessApi<RecommendedMovieEntity>():
+      case SuccessApi<HomeMovieEntity>():
         emit(HomeRecommendedSuccesses(result.data));
-      case ErrorApi<RecommendedMovieEntity>():
+      case ErrorApi<HomeMovieEntity>():
         emit(HomeRecommendedError(result.errorMassage));
     }
   }
@@ -38,9 +37,9 @@ class HomeCubit extends Cubit<HomeState> {
     final result = await _getPopolureMovieUseCase.invoke();
 
     switch (result) {
-      case SuccessApi<PopolureMovieEntity>():
+      case SuccessApi<HomeMovieEntity>():
         emit(HomePopolureSuccesses(result.data));
-      case ErrorApi<PopolureMovieEntity>():
+      case ErrorApi<HomeMovieEntity>():
         emit(HomePopolureError(result.errorMassage));
     }
   }
@@ -50,9 +49,9 @@ class HomeCubit extends Cubit<HomeState> {
     final result = await _getReleasesMovieUseCase.invoke();
 
     switch (result) {
-      case SuccessApi<ReleasesMovieEntity>():
+      case SuccessApi<HomeMovieEntity>():
         emit(HomeReleasesSuccesses(result.data));
-      case ErrorApi<ReleasesMovieEntity>():
+      case ErrorApi<HomeMovieEntity>():
         emit(HomeReleasesError(result.errorMassage));
     }
   }

@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (recommended.isNotEmpty ||
                 popular.isNotEmpty ||
                 releases.isNotEmpty) {
-               isLoading = false;
+              isLoading = false;
             }
 
             setState(() {});
@@ -65,15 +65,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   recommended.isEmpty &&
                   popular.isEmpty &&
                   releases.isEmpty) {
-                return  Center(child: HomeLoadingShimmer());
+                return Center(child: HomeLoadingShimmer());
               }
 
               return CustomScrollView(
                 slivers: [
-                 
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding:  EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 10,
                       ),
@@ -97,8 +96,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (context, index) {
                           final movie = recommended[index];
 
-                         
-
                           return GestureDetector(
                             onTap: () {
                               Navigator.pushNamed(
@@ -109,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             child: Container(
                               width: 160,
-                              margin:  EdgeInsets.all(10),
+                              margin: EdgeInsets.all(10),
                               child: CacheNetworkImage(
                                 imageUrl: movie.posterPath,
                                 fit: .cover,
@@ -122,10 +119,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-                  
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding:  EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 10,
                       ),
@@ -149,18 +145,26 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (context, index) {
                           final movie = popular[index];
 
-
                           return GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                DetailsMovieScreen.routeName,
-                                arguments: movie.id,
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) {
+                              //       return DetailsMovieScreen( id :movie.id);
+                              //     },
+                              //   ),
+                              // ); 
+                              //!
+                              // Navigator.pushNamed(
+                              //   context,
+                              //   DetailsMovieScreen().routeName,
+                              //   arguments: movie.id,
+                              // );
                             },
                             child: Container(
                               width: 160,
-                              margin:  EdgeInsets.all(10),
+                              margin: EdgeInsets.all(10),
                               child: CacheNetworkImage(
                                 imageUrl: movie.posterPath,
                                 fit: .cover,
@@ -173,10 +177,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-                
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding:  EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 10,
                       ),
@@ -198,10 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         scrollDirection: .horizontal,
                         itemCount: releases.length,
                         itemBuilder: (context, index) {
-
                           final movie = releases[index];
-
-                       
 
                           return GestureDetector(
                             onTap: () {
@@ -213,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             child: Container(
                               width: 160,
-                              margin:  EdgeInsets.all(10),
+                              margin: EdgeInsets.all(10),
                               child: CacheNetworkImage(
                                 imageUrl: movie.posterPath,
                                 fit: .cover,
