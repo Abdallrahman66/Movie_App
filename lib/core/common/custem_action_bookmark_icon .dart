@@ -1,12 +1,10 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:movie_app/core/dialogs/app_toastes.dart';
 import 'package:movie_app/core/utils/app_colors.dart';
 
 class CustomActionBookmark extends StatefulWidget {
-  const CustomActionBookmark({super.key});
-  
+  const CustomActionBookmark({super.key, required this.id});
+  final int id;
 
   @override
   State<CustomActionBookmark> createState() => _CustomActionBookmarkState();
@@ -14,7 +12,6 @@ class CustomActionBookmark extends StatefulWidget {
 
 class _CustomActionBookmarkState extends State<CustomActionBookmark> {
   bool isSaved = false;
-
   void toggleSave() {
     setState(() {
       isSaved = !isSaved;

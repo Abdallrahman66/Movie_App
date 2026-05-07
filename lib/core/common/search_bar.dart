@@ -6,19 +6,19 @@ class CustomSearchBar extends StatelessWidget {
     this.hintText = "Search movie...",
     required this.controller,
     required this.onSubmitted,
-
+    this.onChanged,
   });
   final TextEditingController controller;
   void Function(String)? onSubmitted;
   final String hintText;
-
+  void Function(String)? onChanged;
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: TextField(
         controller: controller,
-        onSubmitted: onSubmitted,
+        onChanged: onChanged,
         style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
           hintText: hintText,

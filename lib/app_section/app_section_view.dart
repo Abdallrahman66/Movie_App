@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movie_app/core/common/bottom_navigation%20_bar.dart';
-import 'package:movie_app/feature/search/presentation/view/Search_screen.dart';
+import 'package:movie_app/feature/search/presentation/view/screen/Search_screen.dart';
 import 'package:movie_app/feature/home/presentation/view/home_screen.dart';
 
 import 'package:movie_app/feature/watch_list/presentation/view/watch_list.dart';
