@@ -8,9 +8,8 @@ import '../../domain/repo/search_repository.dart';
 import '../api/home_search_api.dart';
 
 class SearchRepositoryImpl implements SearchRepository {
-  final HomeSearchApi remoteDataSource;
-
   SearchRepositoryImpl(this.remoteDataSource);
+  final HomeSearchApi remoteDataSource;
 
   @override
   Future<ResultApi<List<MovieEntity>>> searchMovies(String query) async {
