@@ -1,0 +1,44 @@
+
+part of 'home_cubit.dart';
+
+@immutable
+abstract class HomeState {}
+
+class HomeInitial extends HomeState {}
+
+class HomeLoading extends HomeState {}
+// class HomeRecommendedLoading extends HomeState {}
+
+// class HomePopolureLoading extends HomeState {}
+
+// class HomeReleasesLoading extends HomeState {}
+
+class HomeRecommendedSuccesses extends HomeState {
+  HomeRecommendedSuccesses(this.recommendedMovieEntity);
+  final HomeMovieEntity recommendedMovieEntity;
+}
+
+class HomePopolureSuccesses extends HomeState {
+  HomePopolureSuccesses(this.popolureMovieEntity);
+  final HomeMovieEntity popolureMovieEntity;
+}
+class HomeReleasesSuccesses extends HomeState {
+  HomeReleasesSuccesses(this.releasesMovieEntity);
+  final HomeMovieEntity releasesMovieEntity;
+}
+
+
+class HomeRecommendedError extends HomeState {
+  HomeRecommendedError(this.messageError);
+  final String messageError;
+}
+
+class HomePopolureError extends HomeState {
+  HomePopolureError(this.messageError);
+  final String messageError;
+}
+
+class HomeReleasesError extends HomeState {
+  HomeReleasesError(this.messageError);
+  final String messageError;
+}
