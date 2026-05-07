@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-
 import 'package:movie_app/core/utils/app_colors.dart';
+import 'package:movie_app/core/utils/assets_icons.dart';
 import 'package:movie_app/core/widgets/cache_networkImage_widget.dart';
 
 import 'package:movie_app/feature/details/presentation/view/details_movie_screen.dart';
@@ -20,8 +20,6 @@ class MovieItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-
-
         Navigator.pushNamed(
           context,
 
@@ -45,10 +43,13 @@ class MovieItem extends StatelessWidget {
               imageUrl: movie.image,
 
               width: 100,
+
               height: 140,
 
               borderRadius:
-                  BorderRadius.circular(16),
+                  BorderRadius.circular(
+                16,
+              ),
             ),
 
             SizedBox(width: 14),
@@ -68,8 +69,8 @@ class MovieItem extends StatelessWidget {
                         TextOverflow.ellipsis,
 
                     style: TextStyle(
-                      color:
-                          AppColor.primaryTextColor,
+                      color: AppColor
+                          .primaryTextColor,
 
                       fontSize: 24,
 
@@ -84,7 +85,9 @@ class MovieItem extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.star_border,
+
                         color: Colors.orange,
+
                         size: 20,
                       ),
 
@@ -92,15 +95,48 @@ class MovieItem extends StatelessWidget {
 
                       Text(
                         movie.voteAverage
-                            .toStringAsFixed(1),
+                            .toStringAsFixed(
+                          1,
+                        ),
 
                         style: TextStyle(
-                          color: Colors.orange,
+                          color:
+                              Colors.orange,
 
                           fontSize: 18,
 
                           fontWeight:
-                              FontWeight.w600,
+                              FontWeight
+                                  .w600,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 10),
+
+                  Row(
+                    children: [
+                      Image.asset(
+                        AssetsIcon
+                            .type_movie_icon,
+                      ),
+
+                      SizedBox(width: 8),
+
+                      Text(
+                        movie.genre,
+
+                        style: TextStyle(
+                          fontSize: 18,
+
+                          fontWeight:
+                              FontWeight
+                                  .w400,
+
+                          color: Color(
+                            0xffFFFFFF,
+                          ),
                         ),
                       ),
                     ],
@@ -111,24 +147,12 @@ class MovieItem extends StatelessWidget {
                   Row(
                     children: [
                       Icon(
-                        Icons.category_outlined,
-                        color: Colors.white70,
-                        size: 18,
-                      ),
+                        Icons
+                            .calendar_today_outlined,
 
-                      SizedBox(width: 8),
+                        color:
+                            Colors.white70,
 
-                      
-                    ],
-                  ),
-
-                  SizedBox(height: 10),
-
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today_outlined,
-                        color: Colors.white70,
                         size: 18,
                       ),
 
@@ -138,7 +162,8 @@ class MovieItem extends StatelessWidget {
                         movie.publishDate,
 
                         style: TextStyle(
-                          color: Colors.white70,
+                          color:
+                              Colors.white70,
 
                           fontSize: 18,
                         ),
@@ -151,8 +176,12 @@ class MovieItem extends StatelessWidget {
                   Row(
                     children: [
                       Icon(
-                        Icons.access_time_outlined,
-                        color: Colors.white70,
+                        Icons
+                            .access_time_outlined,
+
+                        color:
+                            Colors.white70,
+
                         size: 18,
                       ),
 
@@ -162,7 +191,8 @@ class MovieItem extends StatelessWidget {
                         "139 minutes",
 
                         style: TextStyle(
-                          color: Colors.white70,
+                          color:
+                              Colors.white70,
 
                           fontSize: 18,
                         ),
