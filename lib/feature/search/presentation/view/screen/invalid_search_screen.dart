@@ -23,14 +23,14 @@ class InvalidSearchScreen extends StatelessWidget {
             SizedBox(height: 30),
 
             Text(
-              "We Are Sorry, We Can\nNot Find The Movie :(",
+              "We Are Sorry, We Can\nNot Find The Movie ",
 
-              textAlign: TextAlign.center,
+              textAlign: .center,
 
               style: TextStyle(
                 fontSize: 18,
 
-                fontWeight: FontWeight.w600,
+                fontWeight: .w600,
 
                 color: AppColor.primaryTextColor,
 
@@ -43,7 +43,7 @@ class InvalidSearchScreen extends StatelessWidget {
             Text(
               "Find your movie by Type title,\ncategories, years, etc",
 
-              textAlign: TextAlign.center,
+              textAlign: .center,
 
               style: TextStyle(
                 fontSize: 14,
