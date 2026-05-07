@@ -8,7 +8,9 @@ import 'package:movie_app/feature/watch_list/domain/use_case/add_movie_use_case.
 import 'package:movie_app/feature/watch_list/domain/use_case/get_all_movies_use_case.dart';
 import 'package:movie_app/feature/watch_list/domain/use_case/is_movie_saved_use_case.dart';
 import 'package:movie_app/feature/watch_list/domain/use_case/remove_movie_use_case.dart';
+
 import 'package:movie_app/feature/watch_list/presentation/view_model/cubit/watch_list_cubit.dart';
+// import 'package:movie_app/feature/watch_list/presentation/view/widgets/watch_list_empty_widget.dart';
 import 'package:movie_app/feature/watch_list/presentation/view_model/view/widgets/watch_list_empty_widget.dart';
 import 'package:movie_app/feature/watch_list/presentation/view_model/view/widgets/watch_list_movie_item.dart';
 
