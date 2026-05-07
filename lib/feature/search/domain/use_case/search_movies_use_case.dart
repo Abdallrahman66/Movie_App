@@ -4,9 +4,8 @@ import '../entities/movie_entity.dart';
 import '../repo/search_repository.dart';
 
 class SearchMoviesUseCase {
-  final SearchRepository repository;
-
   SearchMoviesUseCase(this.repository);
+  final SearchRepository repository;
 
   Future<ResultApi<List<MovieEntity>>> invoke(String query) {
     return repository.searchMovies(query);
