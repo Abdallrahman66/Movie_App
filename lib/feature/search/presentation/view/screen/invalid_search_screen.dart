@@ -3,29 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/core/utils/app_colors.dart';
 import 'package:movie_app/core/utils/assets_image.dart';
 
-class InvalidSearchWidget
-    extends StatelessWidget {
-  const InvalidSearchWidget({
-    super.key,
-  });
+class InvalidSearchScreen extends StatelessWidget {
+  static const String routeName = "InvalidSearchScreen";
+
+  const InvalidSearchScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding:
-            EdgeInsets.symmetric(horizontal: 20),
+        padding: EdgeInsets.symmetric(horizontal: 20),
 
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-            Image.asset(
-              AssetsImage.NoResultSearch,
-
-              height: 140,
-            ),
+            Image.asset(AssetsImage.NoResultSearch, height: 140),
 
             SizedBox(height: 30),
 
@@ -37,11 +30,9 @@ class InvalidSearchWidget
               style: TextStyle(
                 fontSize: 18,
 
-                fontWeight:
-                    FontWeight.w600,
+                fontWeight: FontWeight.w600,
 
-                color:
-                    AppColor.primaryTextColor,
+                color: AppColor.primaryTextColor,
 
                 height: 1.4,
               ),
@@ -57,8 +48,7 @@ class InvalidSearchWidget
               style: TextStyle(
                 fontSize: 14,
 
-                color:
-                    AppColor.SecoundryTextColor,
+                color: AppColor.SecoundryTextColor,
 
                 height: 1.5,
               ),

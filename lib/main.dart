@@ -9,7 +9,7 @@ import 'package:movie_app/feature/watch_list/presentation/view/watch_list.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:movie_app/feature/search/data/api/search_remote_data_source.dart';
+import 'package:movie_app/feature/search/data/api/home_search_api.dart';
 import 'package:movie_app/feature/search/data/repo/search_repository_imp.dart';
 
 import 'package:movie_app/feature/search/domain/use_case/search_movies_use_case.dart';
@@ -30,12 +30,7 @@ class MyApp extends StatelessWidget {
       routes: {
         AppSectionView.routeName: (context) => const AppSectionView(),
         HomeScreen.routeName: (context) => const HomeScreen(),
-        SearchScreen.routeName: (context) => BlocProvider(
-          create: (context) => SearchCubit(
-            SearchMoviesUseCase(SearchRepositoryImpl(SearchRemoteDataSource())),
-          ),
-          child: const SearchScreen(),
-        ),
+        SearchScreen.routeName: (context) => const SearchScreen(),
         InvalidSearchScreen.routeName: (context) => const InvalidSearchScreen(),
         DetailsMovieScreen.routeName: (context) => const DetailsMovieScreen(),
         WatchList.routeName: (context) => const WatchList(),

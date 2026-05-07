@@ -8,9 +8,7 @@ class SearchMoviesUseCase {
 
   SearchMoviesUseCase(this.repository);
 
-  Future<ResultApi<List<MovieEntity>>> call(
-    String query,
-  ) {
+  Future<ResultApi<List<MovieEntity>>> invoke(String query) {
     return repository.searchMovies(query);
   }
 }

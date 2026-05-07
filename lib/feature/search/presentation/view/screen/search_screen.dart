@@ -1,17 +1,22 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:movie_app/core/common/app_bar.dart';
 import 'package:movie_app/core/common/search_bar.dart';
 import 'package:movie_app/core/dialogs/show_error_ui.dart';
-import 'package:movie_app/core/dialogs/show_loading.dart';
-
 import 'package:movie_app/core/utils/app_colors.dart';
 
 import 'package:movie_app/feature/menu_drawer/view/menu_drawer_screen .dart';
+
+import 'package:movie_app/feature/search/data/api/home_search_api.dart';
+import 'package:movie_app/feature/search/data/repo/search_repository_imp.dart';
+
+import 'package:movie_app/feature/search/domain/use_case/search_movies_use_case.dart';
+
 import 'package:movie_app/feature/search/presentation/view/screen/invalid_search_screen.dart';
-import '../widget/movie_item.dart';
+import 'package:movie_app/feature/search/presentation/view/widget/movie_item.dart';
 
 import '../../view_model/cubit/search_cubit.dart';
 
@@ -22,8 +27,49 @@ class SearchScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController controller = TextEditingController();
+    return BlocProvider(
+      create: (context) => SearchCubit(
+        SearchMoviesUseCase(SearchRepositoryImpl(HomeSearchApi())),
+      ),
+      child: const _SearchScreenBody(),
+    );
+  }
+}
 
+class _SearchScreenBody extends StatefulWidget {
+  const _SearchScreenBody();
+
+  @override
+  State<_SearchScreenBody> createState() => _SearchScreenBodyState();
+}
+
+class _SearchScreenBodyState extends State<_SearchScreenBody> {
+  final TextEditingController controller = TextEditingController();
+
+  Timer? debounce;
+
+  @override
+  void dispose() {
+    debounce?.cancel();
+    controller.dispose();
+
+    super.dispose();
+  }
+
+  void onSearchChanged(String value) {
+    if (debounce?.isActive ?? false) {
+      debounce!.cancel();
+    }
+
+    debounce = Timer(const Duration(milliseconds: 500), () {
+      if (value.trim().isNotEmpty) {
+        context.read<SearchCubit>().searchMovies(value);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.backgroundColor,
 
@@ -32,39 +78,39 @@ class SearchScreen extends StatelessWidget {
       appBar: CustomAppBar(title: "Search"),
 
       body: Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
 
         child: Column(
           children: [
             CustomSearchBar(
               controller: controller,
 
-              onSubmitted: (value) {
-                context.read<SearchCubit>().searchMovies(value);
-              },
+              onSubmitted: (value) {},
+
+              onChanged: onSearchChanged,
             ),
 
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             Expanded(
-              child: BlocBuilder<SearchCubit, SearchState>(
+              child: BlocConsumer<SearchCubit, SearchState>(
+                listener: (context, state) {
+                  if (state is SearchError) {
+                    AppErrorHandler.unknown(context, state.error);
+                  }
+                },
+
                 builder: (context, state) {
                   if (state is SearchLoading) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      AppLoading.show(context, text: "Searching...");
-                    });
-                  } else {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      AppLoading.hide(context);
-                    });
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (state is SearchEmpty) {
+                    return const InvalidSearchScreen();
                   }
 
                   if (state is SearchError) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      AppErrorHandler.unknown(context, state.error);
-                    });
-
-                    return InvalidSearchWidget();
+                    return const InvalidSearchScreen();
                   }
 
                   if (state is SearchSuccess) {
@@ -77,7 +123,7 @@ class SearchScreen extends StatelessWidget {
                     );
                   }
 
-                  return SizedBox();
+                  return const SizedBox();
                 },
               ),
             ),

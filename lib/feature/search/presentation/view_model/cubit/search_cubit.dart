@@ -13,11 +13,15 @@ class SearchCubit extends Cubit<SearchState> {
   Future<void> searchMovies(String query) async {
     emit(SearchLoading());
 
-    final result = await useCase.call(query);
+    final result = await useCase.invoke(query);
 
     switch (result) {
       case SuccessApi():
-        emit(SearchSuccess(result.data));
+        if (result.data.isEmpty) {
+          emit(SearchEmpty());
+        } else {
+          emit(SearchSuccess(result.data));
+        }
 
       case ErrorApi():
         emit(SearchError(result.errorMassage));
