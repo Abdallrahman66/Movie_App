@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:movie_app/core/utils/app_colors.dart';
 import 'package:movie_app/core/utils/assets_icons.dart';
 import 'package:movie_app/core/widgets/cache_networkImage_widget.dart';
+import 'package:movie_app/feature/details/presentation/view/screens/details_movie_screen.dart';
 
-import 'package:movie_app/feature/details/presentation/view/details_movie_screen.dart';
+
 
 import 'package:movie_app/feature/search/domain/entities/movie_entity.dart';
 

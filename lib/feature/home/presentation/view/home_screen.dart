@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movie_app/core/di/service_locatore.dart';
 import 'package:movie_app/core/utils/app_colors.dart';
 import 'package:movie_app/core/widgets/cache_networkImage_widget.dart';
+import 'package:movie_app/feature/details/presentation/view/screens/details_movie_screen.dart';
 
-import 'package:movie_app/feature/details/presentation/view/details_movie_screen.dart';
 import 'package:movie_app/feature/home/presentation/view_model/home_cubit.dart';
 import 'package:movie_app/feature/home/presentation/widget/home_loading_shimmer.dart';
 
@@ -98,10 +98,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           return GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(
+                              Navigator.push(
                                 context,
-                                DetailsMovieScreen.routeName,
-                                arguments: movie.id,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return DetailsMovieScreen(id: movie.id);
+                                  },
+                                ),
                               );
                             },
                             child: Container(
@@ -147,20 +150,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           return GestureDetector(
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) {
-                              //       return DetailsMovieScreen( id :movie.id);
-                              //     },
-                              //   ),
-                              // ); 
-                              //!
-                              // Navigator.pushNamed(
-                              //   context,
-                              //   DetailsMovieScreen().routeName,
-                              //   arguments: movie.id,
-                              // );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return DetailsMovieScreen(id: movie.id);
+                                  },
+                                ),
+                              );
                             },
                             child: Container(
                               width: 160,
@@ -205,10 +202,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           return GestureDetector(
                             onTap: () {
-                              Navigator.pushNamed(
+                              Navigator.push(
                                 context,
-                                DetailsMovieScreen.routeName,
-                                arguments: movie.id,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return DetailsMovieScreen(id: movie.id);
+                                  },
+                                ),
                               );
                             },
                             child: Container(
