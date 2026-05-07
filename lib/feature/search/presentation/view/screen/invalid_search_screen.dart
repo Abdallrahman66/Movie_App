@@ -1,70 +1,71 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:movie_app/feature/menu_drawer/view/menu_drawer_screen%20.dart';
+
 import 'package:movie_app/core/utils/app_colors.dart';
 import 'package:movie_app/core/utils/assets_image.dart';
-import 'package:movie_app/core/common/app_bar.dart';
 
-import 'package:movie_app/core/common/search_bar.dart';
-
-class InvalidSearchScreen extends StatefulWidget {
-  static const String routeName = "InvalidSearchScreen";
-
-  const InvalidSearchScreen({super.key});
-
-  @override
-  State<InvalidSearchScreen> createState() => _InvalidSearchScreenState();
-}
-
-class _InvalidSearchScreenState extends State<InvalidSearchScreen> {
-  TextEditingController controller = TextEditingController();
+class InvalidSearchWidget
+    extends StatelessWidget {
+  const InvalidSearchWidget({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.backgroundColor,
-      endDrawer: MenuDrawer(),
-      appBar: CustomAppBar(title: "Search"),
-      body: Center(
+    return Center(
+      child: Padding(
+        padding:
+            EdgeInsets.symmetric(horizontal: 20),
+
         child: Column(
+          mainAxisAlignment:
+              MainAxisAlignment.center,
+
           children: [
-            SizedBox(height: 30),
-            CustomSearchBar(
-              hintText: "Search Movie...",
-              controller: controller,
-              onSubmitted: (value) {
-                search(); //
-              },
+            Image.asset(
+              AssetsImage.NoResultSearch,
+
+              height: 140,
             ),
-            SizedBox(height: 200),
-            Image.asset(AssetsImage.NoResultSearch),
+
             SizedBox(height: 30),
+
             Text(
-              "we are sorry, we can  not find the movie ",
+              "We Are Sorry, We Can\nNot Find The Movie :(",
+
+              textAlign: TextAlign.center,
+
               style: TextStyle(
-                fontSize: 20,
-                fontWeight: .w600,
-                color: AppColor.primaryTextColor,
+                fontSize: 18,
+
+                fontWeight:
+                    FontWeight.w600,
+
+                color:
+                    AppColor.primaryTextColor,
+
+                height: 1.4,
               ),
             ),
+
+            SizedBox(height: 12),
+
             Text(
-              "Find your movie by Type title, categories, years, etc  ",
+              "Find your movie by Type title,\ncategories, years, etc",
+
+              textAlign: TextAlign.center,
+
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: .w500,
-                color: AppColor.SecoundryTextColor,
+                fontSize: 14,
+
+                color:
+                    AppColor.SecoundryTextColor,
+
+                height: 1.5,
               ),
             ),
           ],
         ),
       ),
     );
-  }
-
-  void search() {
-    String query = controller.text;
-    log(query);
-
-    //  call API
   }
 }
