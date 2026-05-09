@@ -21,12 +21,14 @@ class MovieItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.pushNamed(
+       Navigator.push(
           context,
 
-          DetailsMovieScreen.routeName,
-
-          arguments: movie.id,
+          MaterialPageRoute(
+            builder: (context) {
+              return DetailsMovieScreen(id: movie.id);
+            },
+          ),
         );
       },
 
