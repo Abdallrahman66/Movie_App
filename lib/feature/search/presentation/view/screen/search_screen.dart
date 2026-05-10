@@ -193,7 +193,7 @@ class _SearchScreenBodyState extends State<_SearchScreenBody> {
                       itemCount: state.movies.length,
 
                       itemBuilder: (context, index) {
-                        return MovieItem(movie: state.movies[index]);
+                        return MovieItem(movie: state.movies[index],  query: state.query);
                       },
                     );
                   }

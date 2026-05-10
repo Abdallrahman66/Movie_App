@@ -1,6 +1,7 @@
 import 'package:movie_app/feature/search/domain/entities/movie_entity.dart';
 
 class MovieDto {
+  MovieDto({this.page, this.results, this.totalPages, this.totalResults});
   int? page;
 
   List<MovieDataModel>? results;
@@ -9,25 +10,14 @@ class MovieDto {
 
   int? totalResults;
 
-  MovieDto({
-    this.page,
-    this.results,
-    this.totalPages,
-    this.totalResults,
-  });
-
-  MovieDto.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  MovieDto.fromJson(Map<String, dynamic> json) {
     page = json['page'];
 
     if (json['results'] != null) {
       results = <MovieDataModel>[];
 
       json['results'].forEach((v) {
-        results!.add(
-          MovieDataModel.fromJson(v),
-        );
+        results!.add(MovieDataModel.fromJson(v));
       });
     }
 
@@ -86,86 +76,60 @@ class MovieDataModel {
     this.voteCount,
   });
 
-  MovieDataModel.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  MovieDataModel.fromJson(Map<String, dynamic> json) {
     adult = json['adult'];
 
-    backdropPath =
-        json['backdrop_path'];
+    backdropPath = json['backdrop_path'];
 
-    genreIds =
-        json['genre_ids']
-            ?.cast<int>();
+    genreIds = json['genre_ids']?.cast<int>();
 
     id = json['id'];
 
     title = json['title'];
 
-    originalLanguage =
-        json['original_language'];
+    originalLanguage = json['original_language'];
 
-    originalTitle =
-        json['original_title'];
+    originalTitle = json['original_title'];
 
     overview = json['overview'];
 
-    popularity =
-        (json['popularity']
-                as num?)
-            ?.toDouble();
+    popularity = (json['popularity'] as num?)?.toDouble();
 
-    posterPath =
-        json['poster_path'];
+    posterPath = json['poster_path'];
 
-    releaseDate =
-        json['release_date'];
+    releaseDate = json['release_date'];
 
     softcore = json['softcore'];
 
     video = json['video'];
 
-    voteAverage =
-        (json['vote_average']
-                as num?)
-            ?.toDouble();
+    voteAverage = (json['vote_average'] as num?)?.toDouble();
 
-    voteCount =
-        json['vote_count'];
+    voteCount = json['vote_count'];
   }
 
   MovieEntity toEntity() {
     return MovieEntity(
       id: id ?? 0,
 
-      title:
-          title ?? "No Title",
+      title: title ?? "No Title",
 
-      image:
-          (posterPath != null)
-              ? "https://image.tmdb.org/t/p/w500$posterPath"
-              : "https://img.pikbest.com/backgrounds/20190729/white-wrinkled-paper-background-image_2769903.jpg!w700wp",
+      image: (posterPath != null)
+          ? "https://image.tmdb.org/t/p/w500$posterPath"
+          : "https://img.pikbest.com/backgrounds/20190729/white-wrinkled-paper-background-image_2769903.jpg!w700wp",
 
-      voteAverage:
-          voteAverage ?? 0.0,
+      voteAverage: voteAverage ?? 0.0,
 
-      publishDate:
-          releaseDate
-                  ?.split('-')
-                  .first ??
-              "0000",
+      publishDate: releaseDate?.split('-').first ?? "0000",
 
-      overview:
-          overview ??
-              "No Description",
+      overview: overview ?? "No Description",
 
       genre: getGenre(),
     );
   }
 
   String getGenre() {
-    if (genreIds == null ||
-        genreIds!.isEmpty) {
+    if (genreIds == null || genreIds!.isEmpty) {
       return "Movie";
     }
 
@@ -187,8 +151,6 @@ class MovieDataModel {
       53: "Thriller",
     };
 
-    return genres[
-            genreIds!.first] ??
-        "Movie";
+    return genres[genreIds!.first] ?? "Movie";
   }
 }

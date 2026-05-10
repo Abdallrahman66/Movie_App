@@ -11,10 +11,9 @@ import 'package:movie_app/feature/search/domain/entities/movie_entity.dart';
 class MovieItem extends StatelessWidget {
   final MovieEntity movie;
 
-  const MovieItem({
-    super.key,
-    required this.movie,
-  });
+  final String query;
+
+  const MovieItem({super.key, required this.movie, required this.query});
 
   @override
   Widget build(BuildContext context) {
@@ -30,13 +29,10 @@ class MovieItem extends StatelessWidget {
       },
 
       child: Padding(
-        padding: EdgeInsets.symmetric(
-          vertical: 14,
-        ),
+        padding: EdgeInsets.symmetric(vertical: 14),
 
         child: Row(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
             CacheNetworkImage(
@@ -46,36 +42,31 @@ class MovieItem extends StatelessWidget {
 
               height: 140,
 
-              borderRadius:
-                  BorderRadius.circular(
-                16,
-              ),
+              borderRadius: BorderRadius.circular(16),
             ),
 
             SizedBox(width: 14),
 
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
 
                 children: [
-                  Text(
-                    movie.title,
-
+                  RichText(
                     maxLines: 1,
 
-                    overflow:
-                        TextOverflow.ellipsis,
+                    overflow: TextOverflow.ellipsis,
 
-                    style: TextStyle(
-                      color: AppColor
-                          .primaryTextColor,
+                    text: TextSpan(
+                      children: highlightText(movie.title, query),
 
-                      fontSize: 24,
+                      style: TextStyle(
+                        fontSize: 24,
 
-                      fontWeight:
-                          FontWeight.w500,
+                        fontWeight: FontWeight.w500,
+
+                        color: AppColor.primaryTextColor,
+                      ),
                     ),
                   ),
 
@@ -83,31 +74,19 @@ class MovieItem extends StatelessWidget {
 
                   Row(
                     children: [
-                      Icon(
-                        Icons.star_border,
-
-                        color: Colors.orange,
-
-                        size: 20,
-                      ),
+                      Icon(Icons.star_border, color: Colors.orange, size: 20),
 
                       SizedBox(width: 6),
 
                       Text(
-                        movie.voteAverage
-                            .toStringAsFixed(
-                          1,
-                        ),
+                        movie.voteAverage.toStringAsFixed(1),
 
                         style: TextStyle(
-                          color:
-                              Colors.orange,
+                          color: Colors.orange,
 
                           fontSize: 18,
 
-                          fontWeight:
-                              FontWeight
-                                  .w600,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -117,10 +96,7 @@ class MovieItem extends StatelessWidget {
 
                   Row(
                     children: [
-                      Image.asset(
-                        AssetsIcon
-                            .type_movie_icon,
-                      ),
+                      Image.asset(AssetsIcon.type_movie_icon),
 
                       SizedBox(width: 8),
 
@@ -130,13 +106,9 @@ class MovieItem extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
 
-                          fontWeight:
-                              FontWeight
-                                  .w400,
+                          fontWeight: FontWeight.w400,
 
-                          color: Color(
-                            0xffFFFFFF,
-                          ),
+                          color: Color(0xffFFFFFF),
                         ),
                       ),
                     ],
@@ -147,11 +119,9 @@ class MovieItem extends StatelessWidget {
                   Row(
                     children: [
                       Icon(
-                        Icons
-                            .calendar_today_outlined,
+                        Icons.calendar_today_outlined,
 
-                        color:
-                            Colors.white70,
+                        color: Colors.white70,
 
                         size: 18,
                       ),
@@ -161,12 +131,7 @@ class MovieItem extends StatelessWidget {
                       Text(
                         movie.publishDate,
 
-                        style: TextStyle(
-                          color:
-                              Colors.white70,
-
-                          fontSize: 18,
-                        ),
+                        style: TextStyle(color: Colors.white70, fontSize: 18),
                       ),
                     ],
                   ),
@@ -176,11 +141,9 @@ class MovieItem extends StatelessWidget {
                   Row(
                     children: [
                       Icon(
-                        Icons
-                            .access_time_outlined,
+                        Icons.access_time_outlined,
 
-                        color:
-                            Colors.white70,
+                        color: Colors.white70,
 
                         size: 18,
                       ),
@@ -190,12 +153,7 @@ class MovieItem extends StatelessWidget {
                       Text(
                         "139 minutes",
 
-                        style: TextStyle(
-                          color:
-                              Colors.white70,
-
-                          fontSize: 18,
-                        ),
+                        style: TextStyle(color: Colors.white70, fontSize: 18),
                       ),
                     ],
                   ),
@@ -206,5 +164,39 @@ class MovieItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  List<TextSpan> highlightText(String text, String query) {
+    if (query.isEmpty) {
+      return [TextSpan(text: text)];
+    }
+
+    final matches = RegExp(query, caseSensitive: false);
+
+    final spans = <TextSpan>[];
+
+    int start = 0;
+
+    for (final match in matches.allMatches(text)) {
+      if (match.start > start) {
+        spans.add(TextSpan(text: text.substring(start, match.start)));
+      }
+
+      spans.add(
+        TextSpan(
+          text: text.substring(match.start, match.end),
+
+          style: TextStyle(color: Colors.yellow, fontWeight: FontWeight.bold),
+        ),
+      );
+
+      start = match.end;
+    }
+
+    if (start < text.length) {
+      spans.add(TextSpan(text: text.substring(start)));
+    }
+
+    return spans;
   }
 }
