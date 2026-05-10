@@ -28,6 +28,24 @@ class MovieDto {
 }
 
 class MovieDataModel {
+
+  MovieDataModel({
+    this.adult,
+    this.backdropPath,
+    this.genreIds,
+    this.id,
+    this.title,
+    this.originalLanguage,
+    this.originalTitle,
+    this.overview,
+    this.popularity,
+    this.posterPath,
+    this.releaseDate,
+    this.softcore,
+    this.video,
+    this.voteAverage,
+    this.voteCount,
+  });
   bool? adult;
 
   String? backdropPath;
@@ -57,24 +75,6 @@ class MovieDataModel {
   double? voteAverage;
 
   int? voteCount;
-
-  MovieDataModel({
-    this.adult,
-    this.backdropPath,
-    this.genreIds,
-    this.id,
-    this.title,
-    this.originalLanguage,
-    this.originalTitle,
-    this.overview,
-    this.popularity,
-    this.posterPath,
-    this.releaseDate,
-    this.softcore,
-    this.video,
-    this.voteAverage,
-    this.voteCount,
-  });
 
   MovieDataModel.fromJson(Map<String, dynamic> json) {
     adult = json['adult'];
