@@ -10,8 +10,9 @@ abstract class SearchState {}
 
  class SearchSuccess extends SearchState {
   final List<MovieEntity> movies;
+  SearchSuccess(this.movies, this.query);
+  final String query;
 
-  SearchSuccess(this.movies);
 }
 
  class SearchError extends SearchState {
