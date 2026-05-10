@@ -23,7 +23,7 @@ abstract class AppToast {
     toastification.show(
       context: context,
       type: type,
-      style: .flatColored,
+      style: .fillColored,
       autoCloseDuration: const Duration(seconds: 2),
       alignment: .topCenter,
 
@@ -52,7 +52,7 @@ abstract class AppToast {
         ),
       ),
 
-      backgroundColor: const Color(0xFF1C1C1E),
+      backgroundColor: const Color(0xFF22C55E),
       foregroundColor: Color(0xffffffff),
       borderRadius: .circular(16),
       borderSide: BorderSide(color: mainColor.withOpacity(0.4)),
