@@ -1,0 +1,4398 @@
+﻿=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\main.dart ===
+import 'package:flutter/material.dart';
+import 'package:movie_app/app_section/app_section_view.dart';
+import 'package:movie_app/core/di/service_locatore.dart';
+import 'package:movie_app/feature/home/presentation/view/home_screen.dart';
+import 'package:movie_app/feature/search/presentation/view/screen/Search_screen.dart';
+import 'package:movie_app/feature/search/presentation/view/screen/invalid_search_screen.dart';
+import 'package:movie_app/feature/watch_list/presentation/view/watch_list.dart';
+
+void main() async {
+  configureDependencies();
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      initialRoute: AppSectionView.routeName,
+      routes: {
+        AppSectionView.routeName: (context) => const AppSectionView(),
+        HomeScreen.routeName: (context) => const HomeScreen(),
+        SearchScreen.routeName: (context) => const SearchScreen(),
+        InvalidSearchScreen.routeName: (context) => const InvalidSearchScreen(),
+        WatchList.routeName: (context) => const WatchList(),
+      },
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\app_section\app_section_view.dart ===
+import 'package:flutter/material.dart';
+import 'package:movie_app/core/common/bottom_navigation%20_bar.dart';
+import 'package:movie_app/feature/search/presentation/view/screen/Search_screen.dart';
+import 'package:movie_app/feature/home/presentation/view/home_screen.dart';
+
+import 'package:movie_app/feature/watch_list/presentation/view/watch_list.dart';
+
+class AppSectionView extends StatefulWidget {
+  static const String routeName = "AppSectionView";
+  const AppSectionView({super.key});
+
+  @override
+  State<AppSectionView> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<AppSectionView> {
+  int _currentIndex = 0;
+
+  final List<Widget> _screens =const [HomeScreen(), SearchScreen(), WatchList()];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _screens[_currentIndex],
+
+      bottomNavigationBar: CustomBottomNavigationBar(
+        selectedIndex: _currentIndex,
+        onDestinationSelected: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\common\app_bar.dart ===
+import 'package:flutter/material.dart';
+import 'package:movie_app/core/utils/app_colors.dart';
+
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const CustomAppBar({
+    super.key,
+    required this.title,
+    this.actions,
+    this.leading,
+  });
+  final String title;
+  final List<Widget>? actions;
+  final Widget? leading;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      backgroundColor: AppColor.barColor,
+      leading: leading,
+      title: Text(
+        title,
+        style: TextStyle(color: AppColor.primaryTextColor, fontSize: 20),
+      ),
+      actions: actions,
+
+      centerTitle: true,
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\common\bottom_navigation _bar.dart ===
+import 'package:flutter/material.dart';
+import 'package:movie_app/core/utils/app_colors.dart';
+import 'package:movie_app/core/utils/assets_icons.dart';
+
+class CustomBottomNavigationBar extends StatelessWidget {
+  const CustomBottomNavigationBar({
+    super.key,
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+  });
+
+  final int selectedIndex;
+  final Function(int) onDestinationSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return NavigationBarTheme(
+      data: NavigationBarThemeData(
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const TextStyle(
+              color: Colors.blue,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            );
+          }
+          return const TextStyle(color: Colors.grey, fontSize: 12);
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: Colors.blue);
+          }
+          return const IconThemeData(color: Colors.grey);
+        }),
+      ),
+      child: NavigationBar(
+        backgroundColor: AppColor.barColor,
+        indicatorColor: Colors.transparent,
+        selectedIndex: selectedIndex,
+        onDestinationSelected: onDestinationSelected,
+        destinations: <Widget>[
+          const NavigationDestination(
+            selectedIcon: Icon(Icons.home, color: Colors.blue),
+            icon: Icon(Icons.home_outlined, color: Colors.grey),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Image.asset(AssetsIcon.search_icon, color: Colors.grey),
+            selectedIcon: Image.asset(
+              AssetsIcon.search_icon,
+              color: Colors.blue,
+            ),
+            label: 'Search',
+          ),
+          NavigationDestination(
+            icon: Image.asset(AssetsIcon.home_icon, color: Colors.grey),
+            selectedIcon: const Icon(
+              Icons.account_balance_sharp,
+              color: Colors.blue,
+            ),
+            label: 'Watch List',
+          ),
+        ],
+      ),
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\common\custem_action_bookmark_icon .dart ===
+import 'package:flutter/material.dart';
+import 'package:movie_app/core/dialogs/app_toastes.dart';
+import 'package:movie_app/core/utils/app_colors.dart';
+
+class CustomActionBookmark extends StatefulWidget {
+  const CustomActionBookmark({super.key, required this.id});
+  final int id;
+
+  @override
+  State<CustomActionBookmark> createState() => _CustomActionBookmarkState();
+}
+
+class _CustomActionBookmarkState extends State<CustomActionBookmark> {
+  bool isSaved = false;
+  void toggleSave() {
+    setState(() {
+      isSaved = !isSaved;
+    });
+    if (isSaved) {
+      AppToast.show(
+        context: context,
+        title: "1",
+        description: "Saved",
+        type: .success,
+      );
+    } else {
+      AppToast.show(
+        context: context,
+        title: "2",
+        description: "unSaved",
+        type: .success,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: toggleSave,
+      icon: Icon(
+        isSaved ? Icons.bookmark : Icons.bookmark_border,
+        color: AppColor.SecoundryTextColor,
+      ),
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\common\custem_action_menu.dart ===
+import 'package:flutter/material.dart';
+
+import 'package:movie_app/core/utils/app_colors.dart';
+
+class CustemActionMenu extends StatelessWidget {
+  const CustemActionMenu({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(
+      builder: (context) {
+        return IconButton(
+          icon: Icon(Icons.menu_outlined, color: AppColor.SecoundryTextColor),
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
+        );
+      },
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\common\search_bar.dart ===
+import 'package:flutter/material.dart';
+
+class CustomSearchBar extends StatelessWidget {
+  CustomSearchBar({
+    super.key,
+    this.hintText = "Search movie...",
+    required this.controller,
+    required this.onSubmitted,
+    this.onChanged,
+  });
+  final TextEditingController controller;
+  void Function(String)? onSubmitted;
+  final String hintText;
+  void Function(String)? onChanged;
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: TextField(
+        controller: controller,
+        onChanged: onChanged,
+        style: const TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: const TextStyle(color: Colors.grey),
+          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+
+          filled: true,
+          fillColor: const Color(0xFF2A2A2A),
+          contentPadding: const EdgeInsets.symmetric(
+            vertical: 14,
+            horizontal: 16,
+          ),
+
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      ),
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\di\service_locatore.config.dart ===
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// dart format width=80
+
+// **************************************************************************
+// InjectableConfigGenerator
+// **************************************************************************
+
+// ignore_for_file: type=lint
+// coverage:ignore-file
+
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:get_it/get_it.dart' as _i174;
+import 'package:injectable/injectable.dart' as _i526;
+import 'package:movie_app/feature/home/data/api/home_popolure_api.dart'
+    as _i976;
+import 'package:movie_app/feature/home/data/api/home_recommended_api.dart'
+    as _i668;
+import 'package:movie_app/feature/home/data/api/home_releases_api.dart'
+    as _i913;
+import 'package:movie_app/feature/home/data/repo/data_source/home_popolure_remote_data_source_imp.dart'
+    as _i959;
+import 'package:movie_app/feature/home/data/repo/data_source/home_recommended_remote_data_source_imp.dart'
+    as _i580;
+import 'package:movie_app/feature/home/data/repo/data_source/home_releases_remote_data_source_imp.dart'
+    as _i787;
+import 'package:movie_app/feature/home/data/repo/repository/home_popolure_repository_imp.dart'
+    as _i653;
+import 'package:movie_app/feature/home/data/repo/repository/home_recommended_repository_imp.dart'
+    as _i329;
+import 'package:movie_app/feature/home/data/repo/repository/home_releases_repository_imp.dart'
+    as _i739;
+import 'package:movie_app/feature/home/domain/repo/data_source/popolure_data_source_interface.dart'
+    as _i352;
+import 'package:movie_app/feature/home/domain/repo/data_source/recommended_data_source_interface.dart'
+    as _i99;
+import 'package:movie_app/feature/home/domain/repo/data_source/releases_data_source_interface.dart'
+    as _i343;
+import 'package:movie_app/feature/home/domain/repo/repository/popolure_repository_interface.dart'
+    as _i814;
+import 'package:movie_app/feature/home/domain/repo/repository/recommended_repository_interface.dart'
+    as _i175;
+import 'package:movie_app/feature/home/domain/repo/repository/releases_repository_interface.dart'
+    as _i1005;
+import 'package:movie_app/feature/home/domain/use_case/get_popolure_movie_use_case.dart'
+    as _i458;
+import 'package:movie_app/feature/home/domain/use_case/get_recommended_movie_use_case.dart'
+    as _i67;
+import 'package:movie_app/feature/home/domain/use_case/get_releases_movie_use_case.dart'
+    as _i179;
+import 'package:movie_app/feature/home/presentation/view_model/home_cubit.dart'
+    as _i142;
+
+extension GetItInjectableX on _i174.GetIt {
+  // initializes the registration of main-scope dependencies inside of GetIt
+  _i174.GetIt init({
+    String? environment,
+    _i526.EnvironmentFilter? environmentFilter,
+  }) {
+    final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    gh.singleton<_i976.HomePopularApi>(() => _i976.HomePopularApi());
+    gh.singleton<_i668.HomeRecommendedApi>(() => _i668.HomeRecommendedApi());
+    gh.singleton<_i913.HomeReleasesApi>(() => _i913.HomeReleasesApi());
+    gh.factory<_i352.PopolureDataSourceInterface>(
+      () => _i959.HomePopolureRemoteDataSourceImp(gh<_i976.HomePopularApi>()),
+    );
+    gh.lazySingleton<_i814.PopolureRepositoryInterface>(
+      () => _i653.HomePopolureRepositoryImp(
+        gh<_i352.PopolureDataSourceInterface>(),
+      ),
+    );
+    gh.factory<_i458.GetPopolureMovieUseCase>(
+      () => _i458.GetPopolureMovieUseCase(
+        gh<_i814.PopolureRepositoryInterface>(),
+      ),
+    );
+    gh.factory<_i99.RecommendedDataSourceInterface>(
+      () => _i580.HomeRecommendedRemoteDataSourceImp(
+        gh<_i668.HomeRecommendedApi>(),
+      ),
+    );
+    gh.factory<_i343.ReleasesDataSourceInterface>(
+      () => _i787.HomeReleasesRemoteDataSourceImp(gh<_i913.HomeReleasesApi>()),
+    );
+    gh.lazySingleton<_i175.RecommendedRepositoryInterface>(
+      () => _i329.HomeRecommendedRepositoryImp(
+        gh<_i99.RecommendedDataSourceInterface>(),
+      ),
+    );
+    gh.factory<_i67.GetRecommendedMovieUseCase>(
+      () => _i67.GetRecommendedMovieUseCase(
+        gh<_i175.RecommendedRepositoryInterface>(),
+      ),
+    );
+    gh.lazySingleton<_i1005.ReleasesRepositoryInterface>(
+      () => _i739.HomeReleasesRepositoryImp(
+        gh<_i343.ReleasesDataSourceInterface>(),
+      ),
+    );
+    gh.factory<_i179.GetReleasesMovieUseCase>(
+      () => _i179.GetReleasesMovieUseCase(
+        gh<_i1005.ReleasesRepositoryInterface>(),
+      ),
+    );
+    gh.factory<_i142.HomeCubit>(
+      () => _i142.HomeCubit(
+        gh<_i67.GetRecommendedMovieUseCase>(),
+        gh<_i458.GetPopolureMovieUseCase>(),
+        gh<_i179.GetReleasesMovieUseCase>(),
+      ),
+    );
+    return this;
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\di\service_locatore.dart ===
+import 'package:get_it/get_it.dart';
+import 'package:injectable/injectable.dart';
+import 'package:movie_app/core/di/service_locatore.config.dart';
+
+final getIt = GetIt.instance;
+
+@InjectableInit()
+void configureDependencies() => getIt.init();
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\dialogs\app_toastes.dart ===
+import 'package:flutter/material.dart';
+import 'package:toastification/toastification.dart';
+
+///! how to use
+///ex:
+///AppToast.show(
+///  context: context,
+///   title: "Added to Watchlist",
+///   description: "Movie saved successfully ",
+///   type: .success,
+/// );
+
+abstract class AppToast {
+  static void show({
+    required BuildContext context,
+    required String title,
+    required String description,
+    required ToastificationType type,
+  }) {
+    final Color mainColor = _getColor(type);
+    final IconData icon = _getIcon(type);
+
+    toastification.show(
+      context: context,
+      type: type,
+      style: .fillColored,
+      autoCloseDuration: const Duration(seconds: 2),
+      alignment: .topCenter,
+
+      title: Row(
+        children: [
+          Icon(icon, color: mainColor, size: 22),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: .bold,
+                color: Color(0xffffffff),
+              ),
+            ),
+          ),
+        ],
+      ),
+
+      description: Padding(
+        padding: const EdgeInsets.only(left: 30),
+        child: Text(
+          description,
+          style: const TextStyle(fontSize: 14, color: Colors.black),
+        ),
+      ),
+
+      backgroundColor: const Color(0xFF22C55E),
+      foregroundColor: Color(0xffffffff),
+      borderRadius: .circular(16),
+      borderSide: BorderSide(color: mainColor.withOpacity(0.4)),
+      boxShadow: [
+        BoxShadow(
+          color: mainColor.withOpacity(0.2),
+          blurRadius: 20,
+          spreadRadius: 1,
+        ),
+      ],
+    );
+  }
+
+  static Color _getColor(ToastificationType type) {
+    switch (type) {
+      case ToastificationType.success:
+        return Colors.green;
+      case ToastificationType.info:
+        return Colors.blue;
+      case ToastificationType.warning:
+        return Colors.orange;
+      case ToastificationType.error:
+        return Colors.red;
+      default:
+        return Colors.white;
+    }
+  }
+
+  static IconData _getIcon(ToastificationType type) {
+    switch (type) {
+      case ToastificationType.success:
+        return Icons.check_circle;
+      case ToastificationType.info:
+        return Icons.movie;
+      case ToastificationType.warning:
+        return Icons.warning_amber;
+      case ToastificationType.error:
+        return Icons.error;
+      default:
+        return Icons.notifications;
+    }
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\dialogs\show_error_ui.dart ===
+import 'package:flutter/material.dart';
+
+abstract class AppErrorHandler {
+  static void show({
+    required BuildContext context,
+    required String message,
+    required String title ,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF1C1C1E),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Text(
+            title,
+            style: const TextStyle(
+              color: Colors.redAccent,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            message,
+            style: const TextStyle(color: Colors.white70, fontSize: 14),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  //! Network error
+  static void network(BuildContext context) {
+    show(
+      context: context,
+      title: "Network Error",
+      message: "Please check your internet connection.",
+    );
+  }
+
+  //! Server error
+  static void server(BuildContext context) {
+    show(
+      context: context,
+      title: "Server Error",
+      message: "Something went wrong on our side. Try again later.",
+    );
+  }
+
+ //! Unknown error
+  static void unknown(BuildContext context, String error) {
+    show(context: context, title: "Unexpected Error", message: error);
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\dialogs\show_loading.dart ===
+
+
+import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:movie_app/core/utils/app_colors.dart';
+
+abstract class AppLoading {
+  static void show(BuildContext context, {String? text}) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black.withOpacity(0.6), 
+      builder: (_) {
+        return Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1C1C1E), 
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LoadingAnimationWidget.staggeredDotsWave(
+                  color: AppColor.barColor,
+                  size: 50,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  text ?? "Loading...",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static void hide(BuildContext context) {
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
+  }
+}
+//! dynamic title
+//"Loading Top Rated Movies..."
+// "Adding to Watchlist..."
+// "Searching..."
+//! note for how to use
+// AppLoading.show(context);
+// await api.getMovies(); //? api
+// AppLoading.hide(context);
+//! how to use in search
+// AppLoading.show(context, text: "Searching for \"$query\"...");
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\network\result_api.dart ===
+sealed class ResultApi<T> {}
+
+class SuccessApi<T> extends ResultApi<T> {
+  SuccessApi(this.data);
+  T data;
+}
+
+class ErrorApi<T> extends ResultApi<T> {
+  ErrorApi(this.errorMassage);
+  String errorMassage;
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\utils\api_constant.dart ===
+abstract class ApiConstants {
+
+ 
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\utils\app_colors.dart ===
+import 'package:flutter/material.dart';
+
+abstract class AppColor {
+  static const Color backgroundColor = Color(0xff0F1014);
+  static const Color barColor = Color(0xff242A32);
+  static const Color primaryTextColor = Color(0xffffffff);
+  static const Color SecoundryTextColor = Color(0xff52525D);
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\utils\assets_icons.dart ===
+abstract class AssetsIcon {
+  static const String back_button_icon = "assets/icons/back_button_icon.png";
+  static const String bookmark_icon = "assets/icons/bookmark_icon.png";
+  static const String calendar_blank_icon =
+      "assets/icons/calendar_blank_icon.png";
+  static const String clock_icon = "assets/icons/clock_icon.png";
+  static const String home_icon = "assets/icons/home_icon.png";
+  static const String menu_icon = "assets/icons/menu_icon.png";
+  static const String search_icon = "assets/icons/search_icon.png";
+  static const String star_rate_icon = "assets/icons/star_rate_icon.png";
+  static const String type_movie_icon = "assets/icons/type_movie_icon.png";
+  static const String watch_list_icon = "assets/icons/watch_list_icon.png";
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\utils\assets_image.dart ===
+abstract class AssetsImage {
+  static const String NoMovieYet = "assets/images/no_movies_yet.png";
+  static const String NoResultSearch = "assets/images/no_result_search.png";
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\widgets\cache_networkImage_widget.dart ===
+import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'loading_shimmer.widget.dart';
+
+class CacheNetworkImage extends StatelessWidget {
+  const CacheNetworkImage({
+    super.key,
+    required this.imageUrl,
+    this.width,
+    this.height,
+    this.fit = BoxFit.cover,
+    this.isCircular = false,
+    this.borderRadius,
+    this.placeholderImage,
+    this.memCacheWidth,
+    this.memCacheHeight,
+    this.fadeInDuration = const Duration(milliseconds: 300),
+  });
+
+  final String? imageUrl;
+  final double? width;
+  final double? height;
+  final BoxFit fit;
+  final bool isCircular;
+  final BorderRadius? borderRadius;
+  final String? placeholderImage;
+
+  /// Resize in memory to avoid wasting RAM (pass logical pixels أ— devicePixelRatio)
+  final int? memCacheWidth;
+  final int? memCacheHeight;
+  final Duration fadeInDuration;
+
+  @override
+  Widget build(BuildContext context) {
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+
+    final Widget image = CachedNetworkImage(
+      imageUrl: imageUrl ?? '',
+      fit: fit,
+      width: width,
+      height: height,
+      memCacheWidth: memCacheWidth ?? _safeMemCache(width, dpr),
+      memCacheHeight: memCacheHeight ?? _safeMemCache(height, dpr),
+      fadeInDuration: fadeInDuration,
+      fadeOutDuration: const Duration(milliseconds: 200),
+      useOldImageOnUrlChange: true,
+      placeholder: (_, __) => _buildPlaceholder(),
+      errorWidget: (_, __, ___) => _buildError(),
+    );
+
+    if (isCircular) {
+      return ClipOval(child: image);
+    } else if (borderRadius != null) {
+      return ClipRRect(borderRadius: borderRadius!, child: image);
+    }
+    return image;
+  }
+
+  /// Returns null if [size] is null, infinite, or NaN â€” safe for memCacheWidth/Height.
+  static int? _safeMemCache(double? size, double dpr) {
+    if (size == null || size.isInfinite || size.isNaN || size <= 0) {
+      return null;
+    }
+    return (size * dpr).round();
+  }
+
+  Widget _buildPlaceholder() {
+    if (placeholderImage != null) {
+      return Image.asset(
+        placeholderImage!,
+        fit: fit,
+        width: width,
+        height: height,
+      );
+    }
+    return LoadingShimmer(
+      height: height ?? double.infinity,
+      width: width ?? double.infinity,
+      isCircular: isCircular,
+      borderRadius: borderRadius,
+    );
+  }
+
+  Widget _buildError() {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: borderRadius,
+        shape: isCircular ? BoxShape.circle : BoxShape.rectangle,
+      ),
+      child: Icon(Icons.error, color: Colors.grey.shade400, size: 40),
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\core\widgets\loading_shimmer.widget.dart ===
+import 'package:flutter/material.dart';
+
+class LoadingShimmer extends StatefulWidget {
+  const LoadingShimmer({
+    super.key,
+    this.height,
+    this.width,
+    this.borderRadius,
+    this.isCircular = false,
+  });
+
+  final double? height;
+  final double? width;
+  final BorderRadiusGeometry? borderRadius;
+  final bool isCircular;
+
+  @override
+  State<LoadingShimmer> createState() => _LoadingShimmerState();
+}
+
+class _LoadingShimmerState extends State<LoadingShimmer>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+    _animation = Tween<double>(
+      begin: 0.4,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = isDark ? Colors.grey.shade800 : Colors.grey.shade300;
+
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (_, __) => Container(
+        height: widget.height,
+        width: widget.width,
+        decoration: BoxDecoration(
+          color: baseColor.withOpacity(_animation.value),
+          shape: widget.isCircular ? BoxShape.circle : BoxShape.rectangle,
+          borderRadius: widget.isCircular ? null : widget.borderRadius,
+        ),
+      ),
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\data\api\details_api.dart ===
+import 'dart:convert';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/details/data/model/details_dto.dart';
+import 'package:http/http.dart' as http;
+import 'package:movie_app/feature/details/data/model/similar_dto.dart';
+
+class DetailsApi {
+  Future<ResultApi<DetailsDto>> getDetails(int id) async {
+    try {
+      final Uri url = Uri.https("api.themoviedb.org", "/3/movie/$id", {
+        'api_key': "9d7f94be913eddf2db40e317d2f12f36",
+      });
+      final response = await http.get(url);
+      if (response.statusCode == 200 && response.statusCode < 300) {
+        String responsBody = response.body;
+        Map<String, dynamic> json = jsonDecode(responsBody);
+        return SuccessApi<DetailsDto>(DetailsDto.fromJson(json));
+      } else {
+        return ErrorApi("Error on requst of Api");
+      }
+    } catch (e) {
+      return ErrorApi(e.toString());
+    }
+  }
+
+  Future<ResultApi<SimilarDto>> getSimilar(int id) async {
+    try {
+      final Uri url = Uri.https("api.themoviedb.org", "/3/movie/$id/similar", {
+        'api_key': "9d7f94be913eddf2db40e317d2f12f36",
+      });
+      final response = await http.get(url);
+      if (response.statusCode == 200 && response.statusCode < 300) {
+        String responsBody = response.body;
+        Map<String, dynamic> json = jsonDecode(responsBody);
+        return SuccessApi<SimilarDto>(SimilarDto.fromJson(json));
+      } else {
+        return ErrorApi("Error on requst of Api");
+      }
+    } catch (e) {
+      return ErrorApi(e.toString());
+    }
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\data\model\details_dto.dart ===
+import 'package:movie_app/feature/details/domain/entities/details_entity.dart';
+
+class DetailsDto {
+  DetailsDto({
+    this.adult,
+    this.backdropPath,
+    this.belongsToCollection,
+    this.budget,
+    this.genres,
+    this.homepage,
+    this.id,
+    this.imdbId,
+    this.originCountry,
+    this.originalLanguage,
+    this.originalTitle,
+    this.overview,
+    this.popularity,
+    this.posterPath,
+    this.productionCompanies,
+    this.productionCountries,
+    this.releaseDate,
+    this.revenue,
+    this.runtime,
+    this.softcore,
+    this.spokenLanguages,
+    this.status,
+    this.tagline,
+    this.title,
+    this.video,
+    this.voteAverage,
+    this.voteCount,
+  });
+
+  bool? adult;
+  String? backdropPath;
+  BelongsToCollection? belongsToCollection;
+  int? budget;
+  List<Genres>? genres;
+  String? homepage;
+  int? id;
+  String? imdbId;
+  List<String>? originCountry;
+  String? originalLanguage;
+  String? originalTitle;
+  String? overview;
+  double? popularity;
+  String? posterPath;
+  List<ProductionCompanies>? productionCompanies;
+  List<ProductionCountries>? productionCountries;
+  String? releaseDate;
+  int? revenue;
+  int? runtime;
+  bool? softcore;
+  List<SpokenLanguages>? spokenLanguages;
+  String? status;
+  String? tagline;
+  String? title;
+  bool? video;
+  double? voteAverage;
+  int? voteCount;
+
+  DetailsEntity toEntity() {
+    return DetailsEntity(
+      coverImage: !(backdropPath == null)
+          ? "https://image.tmdb.org/t/p/w500$backdropPath"
+          : 'https://img.pikbest.com/backgrounds/20190729/white-wrinkled-paper-background-image_2769903.jpg!w700wp',
+
+      image: !(posterPath == null)
+          ? "https://image.tmdb.org/t/p/w500$posterPath"
+          : "https://img.pikbest.com/backgrounds/20190729/white-wrinkled-paper-background-image_2769903.jpg!w700wp",
+
+      publishDate: releaseDate?.split('-').first ?? "0000",
+
+      category: (genres != null && genres!.isNotEmpty)
+          ? genres![0].name ?? 'Uncategorized'
+          : 'Uncategorized',
+
+      timeOfMovie: "${runtime ?? 0} Minutes",
+
+      title: title ?? 'No Title',
+
+      description: overview ?? 'No Description',
+      voteAverage: voteAverage ?? 0,
+    );
+  }
+
+  DetailsDto.fromJson(Map<String, dynamic> json) {
+    adult = json['adult'];
+    backdropPath = json['backdrop_path'];
+    belongsToCollection = json['belongs_to_collection'] != null
+        ? BelongsToCollection.fromJson(json['belongs_to_collection'])
+        : null;
+    budget = json['budget'];
+    if (json['genres'] != null) {
+      genres = <Genres>[];
+      json['genres'].forEach((v) {
+        genres!.add(Genres.fromJson(v));
+      });
+    }
+    homepage = json['homepage'];
+    id = json['id'];
+    imdbId = json['imdb_id'];
+    originCountry = json['origin_country'].cast<String>();
+    originalLanguage = json['original_language'];
+    originalTitle = json['original_title'];
+    overview = json['overview'];
+    popularity = json['popularity'];
+    posterPath = json['poster_path'];
+    if (json['production_companies'] != null) {
+      productionCompanies = <ProductionCompanies>[];
+      json['production_companies'].forEach((v) {
+        productionCompanies!.add(ProductionCompanies.fromJson(v));
+      });
+    }
+    if (json['production_countries'] != null) {
+      productionCountries = <ProductionCountries>[];
+      json['production_countries'].forEach((v) {
+        productionCountries!.add(ProductionCountries.fromJson(v));
+      });
+    }
+    releaseDate = json['release_date'];
+    revenue = json['revenue'];
+    runtime = json['runtime'];
+    softcore = json['softcore'];
+    if (json['spoken_languages'] != null) {
+      spokenLanguages = <SpokenLanguages>[];
+      json['spoken_languages'].forEach((v) {
+        spokenLanguages!.add(SpokenLanguages.fromJson(v));
+      });
+    }
+    status = json['status'];
+    tagline = json['tagline'];
+    title = json['title'];
+    video = json['video'];
+    voteAverage = json['vote_average'];
+    voteCount = json['vote_count'];
+  }
+}
+
+class BelongsToCollection {
+  int? id;
+  String? name;
+  String? posterPath;
+  String? backdropPath;
+
+  BelongsToCollection({this.id, this.name, this.posterPath, this.backdropPath});
+
+  BelongsToCollection.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    posterPath = json['poster_path'];
+    backdropPath = json['backdrop_path'];
+  }
+}
+
+class Genres {
+  int? id;
+  String? name;
+
+  Genres({this.id, this.name});
+
+  Genres.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+  }
+}
+
+class ProductionCompanies {
+  int? id;
+  String? logoPath;
+  String? name;
+  String? originCountry;
+
+  ProductionCompanies({this.id, this.logoPath, this.name, this.originCountry});
+
+  ProductionCompanies.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    logoPath = json['logo_path'];
+    name = json['name'];
+    originCountry = json['origin_country'];
+  }
+}
+
+class ProductionCountries {
+  String? iso31661;
+  String? name;
+
+  ProductionCountries({this.iso31661, this.name});
+
+  ProductionCountries.fromJson(Map<String, dynamic> json) {
+    iso31661 = json['iso_3166_1'];
+    name = json['name'];
+  }
+}
+
+class SpokenLanguages {
+  String? englishName;
+  String? iso6391;
+  String? name;
+
+  SpokenLanguages({this.englishName, this.iso6391, this.name});
+
+  SpokenLanguages.fromJson(Map<String, dynamic> json) {
+    englishName = json['english_name'];
+    iso6391 = json['iso_639_1'];
+    name = json['name'];
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\data\model\similar_dto.dart ===
+import 'package:movie_app/feature/details/domain/entities/similar_entity.dart';
+
+class SimilarDto {
+  SimilarDto({this.page, this.results, this.totalPages, this.totalResults});
+
+  int? page;
+  List<Results>? results;
+  int? totalPages;
+  int? totalResults;
+
+  SimilarDto.fromJson(Map<String, dynamic> json) {
+    page = json['page'];
+    if (json['results'] != null) {
+      results = <Results>[];
+      json['results'].forEach((v) {
+        results!.add(Results.fromJson(v));
+      });
+    }
+    totalPages = json['total_pages'];
+    totalResults = json['total_results'];
+  }
+  List<SimilarEntity> toEntity() {
+    return results?.map((movie) => movie.toEntity()).toList() ?? [];
+  }
+}
+
+class Results {
+  Results({
+    this.adult,
+    this.backdropPath,
+    this.genreIds,
+    this.id,
+    this.title,
+    this.originalLanguage,
+    this.originalTitle,
+    this.overview,
+    this.popularity,
+    this.posterPath,
+    this.releaseDate,
+    this.softcore,
+    this.video,
+    this.voteAverage,
+    this.voteCount,
+  });
+
+  bool? adult;
+  String? backdropPath;
+  List<int>? genreIds;
+  int? id;
+  String? title;
+  String? originalLanguage;
+  String? originalTitle;
+  String? overview;
+  double? popularity;
+  String? posterPath;
+  String? releaseDate;
+  bool? softcore;
+  bool? video;
+  double? voteAverage;
+  int? voteCount;
+
+  SimilarEntity toEntity() {
+    return SimilarEntity(
+      image: !(posterPath == null)
+          ? "https://image.tmdb.org/t/p/w500$posterPath"
+          : "https://img.pikbest.com/backgrounds/20190729/white-wrinkled-paper-background-image_2769903.jpg!w700wp",
+      id: id ?? 0,
+    );
+  }
+
+  Results.fromJson(Map<String, dynamic> json) {
+    adult = json['adult'];
+    backdropPath = json['backdrop_path'];
+    genreIds = json['genre_ids'].cast<int>();
+    id = json['id'];
+    title = json['title'];
+    originalLanguage = json['original_language'];
+    originalTitle = json['original_title'];
+    overview = json['overview'];
+    popularity = json['popularity'];
+    posterPath = json['poster_path'];
+    releaseDate = json['release_date'];
+    softcore = json['softcore'];
+    video = json['video'];
+    voteAverage = json['vote_average'];
+    voteCount = json['vote_count'];
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\data\repo\data_source\details_data_source_imp.dart ===
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/details/data/api/details_api.dart';
+import 'package:movie_app/feature/details/data/model/details_dto.dart';
+import 'package:movie_app/feature/details/data/model/similar_dto.dart';
+import 'package:movie_app/feature/details/domain/entities/details_entity.dart';
+import 'package:movie_app/feature/details/domain/entities/similar_entity.dart';
+import 'package:movie_app/feature/details/domain/repo/data_source/details_data_source.dart';
+
+class DetailsDataSourceImp implements DetailsDataSource {
+  DetailsDataSourceImp(this._api);
+  final DetailsApi _api;
+  @override
+  Future<ResultApi<DetailsEntity>> getDetails(int id) async {
+    final result = await _api.getDetails(id);
+    switch (result) {
+      case SuccessApi<DetailsDto>():
+        final detailsDto = result.data;
+        return SuccessApi<DetailsEntity>(detailsDto.toEntity());
+      case ErrorApi<DetailsDto>():
+        return ErrorApi<DetailsEntity>(result.errorMassage);
+    }
+  }
+
+  @override
+  Future<ResultApi<List<SimilarEntity>>> getSimilar(int id) async {
+    final result = await _api.getSimilar(id);
+    switch (result) {
+      case SuccessApi<SimilarDto>():
+        final similarDto = result.data;
+        return SuccessApi<List<SimilarEntity>>(similarDto.toEntity());
+      case ErrorApi<SimilarDto>():
+        return ErrorApi<List<SimilarEntity>>(result.errorMassage);
+    }
+  }
+}
+
+DetailsDataSource detailsDataSourceImpInjectable() =>
+    DetailsDataSourceImp(DetailsApi());
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\data\repo\repository\details_repository_imp.dart ===
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/details/data/repo/data_source/details_data_source_imp.dart';
+import 'package:movie_app/feature/details/domain/entities/details_entity.dart';
+import 'package:movie_app/feature/details/domain/entities/similar_entity.dart';
+import 'package:movie_app/feature/details/domain/repo/data_source/details_data_source.dart';
+import 'package:movie_app/feature/details/domain/repo/repository/details_repository.dart';
+
+class DetailsRepositoryImp implements DetailsRepository {
+  DetailsRepositoryImp(this._dataSource);
+  final DetailsDataSource _dataSource;
+  @override
+  Future<ResultApi<DetailsEntity>> getDetails(int id) async {
+    final result = await _dataSource.getDetails(id);
+    switch (result) {
+      case SuccessApi<DetailsEntity>():
+        final detailsEntity = result.data;
+        return SuccessApi<DetailsEntity>(detailsEntity);
+      case ErrorApi<DetailsEntity>():
+        return ErrorApi<DetailsEntity>(result.errorMassage);
+    }
+  }
+
+  @override
+  Future<ResultApi<List<SimilarEntity>>> getSimilar(int id) async {
+    final result = await _dataSource.getSimilar(id);
+    switch (result) {
+      case SuccessApi<List<SimilarEntity>>():
+        final List<SimilarEntity> similarList = result.data;
+        return SuccessApi<List<SimilarEntity>>(similarList);
+      case ErrorApi<List<SimilarEntity>>():
+        return ErrorApi<List<SimilarEntity>>(result.errorMassage);
+    }
+  }
+}
+
+DetailsRepository detailsRepositoryImpIngectable() =>
+    DetailsRepositoryImp(detailsDataSourceImpInjectable());
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\domain\entities\details_entity.dart ===
+class DetailsEntity {
+  DetailsEntity({
+    required this.coverImage,
+    required this.image,
+    required this.publishDate,
+    required this.category,
+    required this.timeOfMovie,
+    required this.title,
+    required this.description,
+    required this.voteAverage,
+  });
+
+  String coverImage;
+  String image;
+  String publishDate;
+  String category;
+  String timeOfMovie;
+  String title;
+  String description;
+  double voteAverage;
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\domain\entities\similar_entity.dart ===
+class SimilarEntity {
+  SimilarEntity({required this.image, required this.id});
+  String image;
+  int id;
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\domain\repo\data_source\details_data_source.dart ===
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/details/domain/entities/details_entity.dart';
+import 'package:movie_app/feature/details/domain/entities/similar_entity.dart';
+
+abstract interface class DetailsDataSource {
+  Future<ResultApi<DetailsEntity>> getDetails(int id);
+  Future<ResultApi<List<SimilarEntity>>> getSimilar(int id);
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\domain\repo\repository\details_repository.dart ===
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/details/domain/entities/details_entity.dart';
+import 'package:movie_app/feature/details/domain/entities/similar_entity.dart';
+
+abstract interface class DetailsRepository {
+  Future<ResultApi<DetailsEntity>> getDetails(int id);
+  Future<ResultApi<List<SimilarEntity>>> getSimilar(int id);
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\domain\use_case\get_details_use_case.dart ===
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/details/data/repo/repository/details_repository_imp.dart';
+import 'package:movie_app/feature/details/domain/entities/details_entity.dart';
+import 'package:movie_app/feature/details/domain/repo/repository/details_repository.dart';
+
+class GetDetailsUseCase {
+  GetDetailsUseCase(this._repo);
+
+  final DetailsRepository _repo;
+
+  Future<ResultApi<DetailsEntity>> invoke(int id) => _repo.getDetails(id);
+}
+
+GetDetailsUseCase getDetailsUseCaseInject() =>
+    GetDetailsUseCase(detailsRepositoryImpIngectable());
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\domain\use_case\get_similar_use_case.dart ===
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/details/data/repo/repository/details_repository_imp.dart';
+import 'package:movie_app/feature/details/domain/entities/similar_entity.dart';
+import 'package:movie_app/feature/details/domain/repo/repository/details_repository.dart';
+
+class GetSimilarUseCase {
+  GetSimilarUseCase(this._repo);
+
+  final DetailsRepository _repo;
+
+  Future<ResultApi<List<SimilarEntity>>> invoke(int id) => _repo.getSimilar(id);
+}
+
+GetSimilarUseCase getSimilarUseCaseInject() =>
+    GetSimilarUseCase(detailsRepositoryImpIngectable());
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\presentation\view\screens\details_movie_screen.dart ===
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_app/core/utils/app_colors.dart';
+import 'package:movie_app/core/common/app_bar.dart';
+import 'package:movie_app/core/common/custem_action_bookmark_icon%20.dart';
+import 'package:movie_app/core/utils/assets_icons.dart';
+import 'package:movie_app/core/widgets/cache_networkImage_widget.dart';
+import 'package:movie_app/feature/details/domain/use_case/get_details_use_case.dart';
+import 'package:movie_app/feature/details/domain/use_case/get_similar_use_case.dart';
+import 'package:movie_app/feature/details/presentation/view/widgets/view_movie_widget.dart';
+import 'package:movie_app/feature/details/presentation/view_model/details_cubit.dart';
+
+class DetailsMovieScreen extends StatefulWidget {
+  const DetailsMovieScreen({super.key, required this.id});
+  static const String routeName = "DetailsMovieScreen";
+  final int id;
+  @override
+  State<DetailsMovieScreen> createState() => _DetailsMovieScreenState();
+}
+
+class _DetailsMovieScreenState extends State<DetailsMovieScreen> {
+  late DetailsCubit _cubit;
+  @override
+  void initState() {
+    super.initState();
+    _cubit = DetailsCubit(
+      getDetailsUseCaseInject(),
+      getSimilarUseCaseInject(),
+      widget.id,
+    );
+    _cubit.getData(widget.id);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColor.backgroundColor,
+      appBar: CustomAppBar(
+        title: "Detail",
+        actions: [CustomActionBookmark(id: widget.id)],
+        leading: InkWell(
+          onTap: () {
+            Navigator.of(context).pop();
+          },
+          child: Image.asset(AssetsIcon.back_button_icon),
+        ),
+      ),
+
+      body: CustomScrollView(
+        slivers: [
+          BlocBuilder<DetailsCubit, DetailsState>(
+            bloc: _cubit,
+            buildWhen: (previous, current) =>
+                current is DetailsLoadingState ||
+                current is DetailsSuccessState ||
+                current is DetailsErrorState,
+            builder: (context, state) {
+              if (state is DetailsLoadingState) {
+                return SliverToBoxAdapter(
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (state is DetailsSuccessState) {
+                return SliverToBoxAdapter(
+                  child: ViewMovieWidget(movieDetails: _cubit.movie),
+                );
+              }
+              if (state is DetailsErrorState) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    child: Text(
+                      state.error,
+                      textAlign: .center,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: .w400,
+                        color: Color(0xffFFFFFF),
+                      ),
+                    ),
+                  ),
+                );
+              }
+              return SliverToBoxAdapter(child: SizedBox.shrink());
+            },
+          ),
+          SliverToBoxAdapter(child: SizedBox(height: 24)),
+
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Text(
+                "similar",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: .w400,
+                  color: Color(0xffFFFFFF),
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(child: SizedBox(height: 24)),
+          BlocBuilder<DetailsCubit, DetailsState>(
+            bloc: _cubit,
+            buildWhen: (previous, current) =>
+                current is SimilarLoadingState ||
+                current is SimilarSuccessState ||
+                current is SimilarErrorState,
+            builder: (context, state) {
+              if (state is SimilarLoadingState) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (state is SimilarSuccessState) {
+                return SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  sliver: SliverGrid.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 15.0,
+                      crossAxisSpacing: 15.0,
+                      childAspectRatio: 0.7,
+                    ),
+                    itemCount: _cubit.similarMovies.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return DetailsMovieScreen(
+                                  id: _cubit.similarMovies[index].id,
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: CacheNetworkImage(
+                            imageUrl: _cubit.similarMovies[index].image,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
+              if (state is SimilarErrorState) {
+                return SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: Text(state.error)),
+                );
+              }
+              return SliverToBoxAdapter(child: SizedBox.shrink());
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\presentation\view\widgets\item_row_icon_text_widget.dart ===
+import 'package:flutter/material.dart';
+
+class IteamRowIconTextWidget extends StatelessWidget {
+  const IteamRowIconTextWidget({
+    super.key,
+    required this.iconPath,
+    required this.text,
+  });
+  final String iconPath;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Image.asset(iconPath, color: Color(0xff92929D)),
+        SizedBox(width: 4),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: .w500,
+            color: Color(0xff92929D),
+          ),
+        ),
+      ],
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\presentation\view\widgets\view_movie_widget.dart ===
+import 'package:flutter/material.dart';
+import 'package:movie_app/core/utils/assets_icons.dart';
+import 'package:movie_app/core/widgets/cache_networkImage_widget.dart';
+import 'package:movie_app/feature/details/domain/entities/details_entity.dart';
+import 'package:movie_app/feature/details/presentation/view/widgets/item_row_icon_text_widget.dart';
+
+class ViewMovieWidget extends StatelessWidget {
+  const ViewMovieWidget({super.key, required this.movieDetails});
+  final DetailsEntity movieDetails;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              height: 250,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                image: DecorationImage(
+                  image: NetworkImage(movieDetails.coverImage),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+
+            Positioned(
+              bottom: 10,
+              right: 10,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.star_border, color: Color(0xffFF8700), size: 18),
+                    Text(
+                      movieDetails.voteAverage.roundToDouble().toString(),
+                      style: TextStyle(color: Color(0xffFF8700)),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            Positioned(
+              left: 30,
+              top: 175,
+              child: Row(
+                crossAxisAlignment: .end,
+
+                children: [
+                  CacheNetworkImage(
+                    imageUrl: movieDetails.image,
+                    height: 140,
+                    width: 100,
+                    fit: BoxFit.fill,
+                  ),
+                  Text(
+                    movieDetails.title,
+                    textAlign: .left,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: .w600,
+                      color: Color(0xffFFFFFF),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 80),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 60),
+          child: Row(
+            children: [
+              IteamRowIconTextWidget(
+                iconPath: AssetsIcon.calendar_blank_icon,
+                text: movieDetails.publishDate,
+              ),
+              SizedBox(
+                height: 20,
+                child: VerticalDivider(
+                  color: Color(0xff92929D),
+                  thickness: 1,
+                  width: 20,
+                ),
+              ),
+
+              IteamRowIconTextWidget(
+                iconPath: AssetsIcon.clock_icon,
+                text: movieDetails.timeOfMovie,
+              ),
+              SizedBox(
+                height: 20,
+                child: VerticalDivider(
+                  color: Color(0xff92929D),
+                  thickness: 1,
+                  width: 40,
+                ),
+              ),
+
+              IteamRowIconTextWidget(
+                iconPath: AssetsIcon.type_movie_icon,
+                text: movieDetails.category,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+          child: Text(
+            movieDetails.description,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: .w400,
+              color: Color(0xffFFFFFF),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\presentation\view_model\details_cubit.dart ===
+import 'package:bloc/bloc.dart';
+import 'package:meta/meta.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/details/domain/entities/details_entity.dart';
+import 'package:movie_app/feature/details/domain/entities/similar_entity.dart';
+import 'package:movie_app/feature/details/domain/use_case/get_details_use_case.dart';
+import 'package:movie_app/feature/details/domain/use_case/get_similar_use_case.dart';
+
+part 'details_state.dart';
+
+class DetailsCubit extends Cubit<DetailsState> {
+  DetailsCubit(this._details, this._similar, this.id) : super(DetailsInitial());
+  final GetDetailsUseCase _details;
+  final GetSimilarUseCase _similar;
+
+  late final DetailsEntity movie;
+  late final List<SimilarEntity> similarMovies;
+
+  int id;
+  Future<void> getDetails() async {
+    emit(DetailsLoadingState());
+    final result = await _details.invoke(id);
+    switch (result) {
+      case SuccessApi<DetailsEntity>():
+        movie = result.data;
+        emit(DetailsSuccessState());
+      case ErrorApi<DetailsEntity>():
+        emit(DetailsErrorState(result.errorMassage));
+    }
+  }
+
+  Future<void> getSimilar() async {
+    emit(SimilarLoadingState());
+    final result = await _similar.invoke(id);
+    switch (result) {
+      case SuccessApi<List<SimilarEntity>>():
+        similarMovies = result.data;
+        emit(SimilarSuccessState());
+      case ErrorApi<List<SimilarEntity>>():
+        emit(SimilarErrorState(result.errorMassage));
+    }
+  }
+
+  Future<void> getData(int id) async {
+    this.id = id;
+    await Future.wait([getDetails(), getSimilar()]);
+  }
+}
+
+//  Future<ResultApi<List<SimilarEntity>>>
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\details\presentation\view_model\details_state.dart ===
+part of 'details_cubit.dart';
+
+@immutable
+abstract class DetailsState {}
+
+class DetailsInitial extends DetailsState {}
+
+class DetailsLoadingState extends DetailsState {}
+
+class DetailsSuccessState extends DetailsState {}
+
+class DetailsErrorState extends DetailsState {
+  DetailsErrorState(this.error);
+  final String error;
+}
+
+class SimilarLoadingState extends DetailsState {}
+
+class SimilarSuccessState extends DetailsState {}
+
+class SimilarErrorState extends DetailsState {
+  SimilarErrorState(this.error);
+  final String error;
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\api\home_popolure_api.dart ===
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:injectable/injectable.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/data/model/popolure_movie_dto.dart';
+
+@singleton
+class HomePopularApi {
+  Future<ResultApi<PopolureMovieDto>> getPopularMovie() async {
+    try {
+      var url = Uri.https("api.themoviedb.org", "/3/movie/popular", {
+        "api_key": "9d7f94be913eddf2db40e317d2f12f36",
+      });
+
+      final response = await http.get(url);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final json = jsonDecode(response.body);
+        final dto = PopolureMovieDto.fromJson(json);
+
+        return SuccessApi<PopolureMovieDto>(dto);
+      } else {
+        final json = jsonDecode(response.body);
+
+        String message = json["status_message"] ?? "Server error";
+
+        switch (response.statusCode) {
+          case 401:
+            message = "Unauthorized (API key issue)";
+            break;
+          case 404:
+            message = "Data not found";
+            break;
+          case 500:
+            message = "Server crashed";
+            break;
+        }
+
+        return ErrorApi<PopolureMovieDto>(message);
+      }
+    } on http.ClientException {
+      return ErrorApi<PopolureMovieDto>("No internet connection");
+    } catch (e) {
+      if (e.toString().contains("TimeoutException")) {
+        return ErrorApi<PopolureMovieDto>("Request timeout, try again");
+      }
+      return ErrorApi<PopolureMovieDto>("Unexpected error: ${e.toString()}");
+    }
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\api\home_recommended_api.dart ===
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:injectable/injectable.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/data/model/recommended_movie_dto.dart';
+
+@singleton
+class HomeRecommendedApi {
+  Future<ResultApi<RecommendedMovieDto>> getRecommendedMovie() async {
+    try {
+      var url = Uri.https("api.themoviedb.org", "/3/movie/top_rated", {
+        "api_key": "9d7f94be913eddf2db40e317d2f12f36",
+      });
+
+      final response = await http.get(url);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final json = jsonDecode(response.body);
+        final dto = RecommendedMovieDto.fromJson(json);
+
+        return SuccessApi<RecommendedMovieDto>(dto);
+      } else {
+        final json = jsonDecode(response.body);
+
+        String message = json["status_message"] ?? "Server error";
+
+        switch (response.statusCode) {
+          case 401:
+            message = "Unauthorized (API key issue)";
+            break;
+          case 404:
+            message = "Data not found";
+            break;
+          case 500:
+            message = "Server crashed";
+            break;
+        }
+
+        return ErrorApi<RecommendedMovieDto>(message);
+      }
+    } on http.ClientException {
+      return ErrorApi<RecommendedMovieDto>("No internet connection");
+    } catch (e) {
+      if (e.toString().contains("TimeoutException")) {
+        return ErrorApi<RecommendedMovieDto>("Request timeout, try again");
+      }
+      return ErrorApi<RecommendedMovieDto>("Unexpected error: ${e.toString()}");
+    }
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\api\home_releases_api.dart ===
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:injectable/injectable.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/data/model/releases_movie_dto.dart';
+
+@singleton
+class HomeReleasesApi {
+  Future<ResultApi<ReleasesMovieDto>> getReleasesMovie() async {
+    try {
+      var url = Uri.https("api.themoviedb.org", "/3/movie/upcoming", {
+        "api_key": "9d7f94be913eddf2db40e317d2f12f36",
+      });
+
+      final response = await http.get(url);
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final json = jsonDecode(response.body);
+        final dto = ReleasesMovieDto.fromJson(json);
+
+        return SuccessApi<ReleasesMovieDto>(dto);
+      } else {
+        final json = jsonDecode(response.body);
+
+        String message = json["status_message"] ?? "Server error";
+
+        switch (response.statusCode) {
+          case 401:
+            message = "Unauthorized (API key issue)";
+            break;
+          case 404:
+            message = "Data not found";
+            break;
+          case 500:
+            message = "Server crashed";
+            break;
+        }
+        return ErrorApi<ReleasesMovieDto>(message);
+      }
+    } on http.ClientException {
+      return ErrorApi<ReleasesMovieDto>("No internet connection");
+    } catch (e) {
+      if (e.toString().contains("TimeoutException")) {
+        return ErrorApi<ReleasesMovieDto>("Request timeout, try again");
+      }
+      return ErrorApi<ReleasesMovieDto>("Unexpected error: ${e.toString()}");
+    }
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\mapper\popolure_movie_mapper.dart ===
+import 'package:movie_app/feature/home/data/model/popolure_movie_dto.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+extension PopolureMovieMapper on PopolureMovieDto {
+  HomeMovieEntity toEntity() {
+    return HomeMovieEntity(
+      results:
+          results
+              ?.map(
+                (e) => MovieItemEntity(
+                  id: e.id ?? 0,
+                  posterPath:
+                      "https://image.tmdb.org/t/p/w500${e.posterPath ?? ""}",
+                ),
+              )
+              .toList() ??
+          [],
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\mapper\recommended_movie_maper.dart ===
+import 'package:movie_app/feature/home/data/model/recommended_movie_dto.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+extension RecommendedMovieMapper on RecommendedMovieDto {
+  HomeMovieEntity toEntity() {
+    return HomeMovieEntity(
+      results:
+          results
+              ?.map(
+                (e) => MovieItemEntity(
+                  id: e.id ?? 0,
+                  posterPath:
+                      "https://image.tmdb.org/t/p/w500${e.posterPath ?? ""}",
+                ),
+              )
+              .toList() ??
+          [],
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\mapper\releases_movie_mapper.dart ===
+import 'package:movie_app/feature/home/data/model/releases_movie_dto.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+extension ReleasesMovieMapper on ReleasesMovieDto {
+  HomeMovieEntity toEntity() {
+    return HomeMovieEntity(
+      results:
+          results
+              ?.map(
+                (e) => MovieItemEntity(
+                  id: e.id ?? 0,
+                  posterPath:
+                      "https://image.tmdb.org/t/p/w500${e.posterPath ?? ""}",
+                ),
+              )
+              .toList() ??
+          [],
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\model\popolure_movie_dto.dart ===
+class PopolureMovieDto {
+  PopolureMovieDto({
+    this.page,
+    this.results,
+    this.totalPages,
+    this.totalResults,
+  });
+  int? page;
+  List<ResultsPopoluredto>? results;
+  int? totalPages;
+  int? totalResults;
+
+  PopolureMovieDto.fromJson(Map<String, dynamic> json) {
+    page = json['page'];
+    if (json['results'] != null) {
+      results = <ResultsPopoluredto>[];
+      json['results'].forEach((v) {
+        results!.add(new ResultsPopoluredto.fromJson(v));
+      });
+    }
+    totalPages = json['total_pages'];
+    totalResults = json['total_results'];
+  }
+
+ 
+}
+
+class ResultsPopoluredto {
+  ResultsPopoluredto({
+    this.adult,
+    this.backdropPath,
+    this.genreIds,
+    this.id,
+    this.title,
+    this.originalLanguage,
+    this.originalTitle,
+    this.overview,
+    this.popularity,
+    this.posterPath,
+    this.releaseDate,
+    this.softcore,
+    this.video,
+    this.voteAverage,
+    this.voteCount,
+  });
+
+  bool? adult;
+  String? backdropPath;
+  List<int>? genreIds;
+  int? id;
+  String? title;
+  String? originalLanguage;
+  String? originalTitle;
+  String? overview;
+  double? popularity;
+  String? posterPath;
+  String? releaseDate;
+  bool? softcore;
+  bool? video;
+  double? voteAverage;
+  int? voteCount;
+
+  ResultsPopoluredto.fromJson(Map<String, dynamic> json) {
+    adult = json['adult'];
+    backdropPath = json['backdrop_path'];
+    genreIds = json['genre_ids'].cast<int>();
+    id = json['id'];
+    title = json['title'];
+    originalLanguage = json['original_language'];
+    originalTitle = json['original_title'];
+    overview = json['overview'];
+    popularity = json['popularity'];
+    posterPath = json['poster_path'];
+    releaseDate = json['release_date'];
+    softcore = json['softcore'];
+    video = json['video'];
+    voteAverage = json['vote_average'];
+    voteCount = json['vote_count'];
+  }
+
+
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\model\recommended_movie_dto.dart ===
+class RecommendedMovieDto {
+  RecommendedMovieDto({
+    this.page,
+    this.results,
+    this.totalPages,
+    this.totalResults,
+  });
+  int? page;
+  List<ResultsRecommendedDto>? results;
+  int? totalPages;
+  int? totalResults;
+
+  RecommendedMovieDto.fromJson(Map<String, dynamic> json) {
+    page = json['page'];
+    if (json['results'] != null) {
+      results = <ResultsRecommendedDto>[];
+      json['results'].forEach((v) {
+        results!.add(new ResultsRecommendedDto.fromJson(v));
+      });
+    }
+    totalPages = json['total_pages'];
+    totalResults = json['total_results'];
+  }
+
+
+}
+
+class ResultsRecommendedDto {
+  ResultsRecommendedDto({
+    this.adult,
+    this.backdropPath,
+    this.genreIds,
+    this.id,
+    this.title,
+    this.originalLanguage,
+    this.originalTitle,
+    this.overview,
+    this.popularity,
+    this.posterPath,
+    this.releaseDate,
+    this.softcore,
+    this.video,
+    this.voteAverage,
+    this.voteCount,
+  });
+  bool? adult;
+  String? backdropPath;
+  List<int>? genreIds;
+  int? id;
+  String? title;
+  String? originalLanguage;
+  String? originalTitle;
+  String? overview;
+  double? popularity;
+  String? posterPath;
+  String? releaseDate;
+  bool? softcore;
+  bool? video;
+  double? voteAverage;
+  int? voteCount;
+
+  ResultsRecommendedDto.fromJson(Map<String, dynamic> json) {
+    adult = json['adult'];
+    backdropPath = json['backdrop_path'];
+    genreIds = json['genre_ids'].cast<int>();
+    id = json['id'];
+    title = json['title'];
+    originalLanguage = json['original_language'];
+    originalTitle = json['original_title'];
+    overview = json['overview'];
+    popularity = json['popularity'];
+    posterPath = json['poster_path'];
+    releaseDate = json['release_date'];
+    softcore = json['softcore'];
+    video = json['video'];
+    voteAverage = json['vote_average'];
+    voteCount = json['vote_count'];
+  }
+
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\model\releases_movie_dto.dart ===
+class ReleasesMovieDto {
+  ReleasesMovieDto({
+    this.dates,
+    this.page,
+    this.results,
+    this.totalPages,
+    this.totalResults,
+  });
+  ReleasesDatesDto? dates;
+  int? page;
+  List<ResultReleasesDto>? results;
+  int? totalPages;
+  int? totalResults;
+
+
+  ReleasesMovieDto.fromJson(Map<String, dynamic> json) {
+    dates = json['dates'] != null ? new ReleasesDatesDto.fromJson(json['dates']) : null;
+    page = json['page'];
+    if (json['results'] != null) {
+      results = <ResultReleasesDto>[];
+      json['results'].forEach((v) {
+        results!.add(new ResultReleasesDto.fromJson(v));
+      });
+    }
+    totalPages = json['total_pages'];
+    totalResults = json['total_results'];
+  }
+
+  // Map<String, dynamic> toJson() {
+  //   final Map<String, dynamic> data = new Map<String, dynamic>();
+  //   if (this.dates != null) {
+  //     data['dates'] = this.dates!.toJson();
+  //   }
+  //   data['page'] = this.page;
+  //   if (this.results != null) {
+  //     data['results'] = this.results!.map((v) => v.toJson()).toList();
+  //   }
+  //   data['total_pages'] = this.totalPages;
+  //   data['total_results'] = this.totalResults;
+  //   return data;
+  // }
+}
+
+class ReleasesDatesDto {
+  ReleasesDatesDto({this.maximum, this.minimum});
+  String? maximum;
+  String? minimum;
+
+
+  ReleasesDatesDto.fromJson(Map<String, dynamic> json) {
+    maximum = json['maximum'];
+    minimum = json['minimum'];
+  }
+
+  // Map<String, dynamic> toJson() {
+  //   final Map<String, dynamic> data = new Map<String, dynamic>();
+  //   data['maximum'] = this.maximum;
+  //   data['minimum'] = this.minimum;
+  //   return data;
+  // }
+}
+
+class ResultReleasesDto {
+  ResultReleasesDto({
+    this.adult,
+    this.backdropPath,
+    this.genreIds,
+    this.id,
+    this.title,
+    this.originalLanguage,
+    this.originalTitle,
+    this.overview,
+    this.popularity,
+    this.posterPath,
+    this.releaseDate,
+    this.softcore,
+    this.video,
+    this.voteAverage,
+    this.voteCount,
+  });
+  bool? adult;
+  String? backdropPath;
+  List<int>? genreIds;
+  int? id;
+  String? title;
+  String? originalLanguage;
+  String? originalTitle;
+  String? overview;
+  double? popularity;
+  String? posterPath;
+  String? releaseDate;
+  bool? softcore;
+  bool? video;
+  double? voteAverage;
+  int? voteCount;
+
+
+  ResultReleasesDto.fromJson(Map<String, dynamic> json) {
+    adult = json['adult'];
+    backdropPath = json['backdrop_path'];
+    genreIds = json['genre_ids'].cast<int>();
+    id = json['id'];
+    title = json['title'];
+    originalLanguage = json['original_language'];
+    originalTitle = json['original_title'];
+    overview = json['overview'];
+    popularity = json['popularity'];
+    posterPath = json['poster_path'];
+    releaseDate = json['release_date'];
+    softcore = json['softcore'];
+    video = json['video'];
+    voteAverage = json['vote_average'];
+    voteCount = json['vote_count'];
+  }
+
+
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\repo\data_source\home_popolure_remote_data_source_imp.dart ===
+import 'package:injectable/injectable.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/data/api/home_popolure_api.dart';
+import 'package:movie_app/feature/home/data/mapper/popolure_movie_mapper.dart';
+
+import 'package:movie_app/feature/home/data/model/popolure_movie_dto.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+import 'package:movie_app/feature/home/domain/repo/data_source/popolure_data_source_interface.dart';
+
+@Injectable(as: PopolureDataSourceInterface)
+class HomePopolureRemoteDataSourceImp implements PopolureDataSourceInterface {
+  HomePopolureRemoteDataSourceImp(this._api);
+  final HomePopularApi _api;
+
+  @override
+  Future<ResultApi<HomeMovieEntity>> getPopolureMovie() async {
+    final result = await _api.getPopularMovie();
+    switch (result) {
+      case SuccessApi<PopolureMovieDto>():
+        final dto = result.data;
+        return SuccessApi(dto.toEntity());
+      case ErrorApi<PopolureMovieDto>():
+        return ErrorApi<HomeMovieEntity>(result.errorMassage);
+    }
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\repo\data_source\home_recommended_remote_data_source_imp.dart ===
+import 'package:injectable/injectable.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/data/api/home_recommended_api.dart';
+import 'package:movie_app/feature/home/data/mapper/recommended_movie_maper.dart';
+import 'package:movie_app/feature/home/data/model/recommended_movie_dto.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+import 'package:movie_app/feature/home/domain/repo/data_source/recommended_data_source_interface.dart';
+
+@Injectable(as: RecommendedDataSourceInterface)
+
+class HomeRecommendedRemoteDataSourceImp
+    implements RecommendedDataSourceInterface {
+      
+  HomeRecommendedRemoteDataSourceImp(this._api);
+  final HomeRecommendedApi _api;
+
+  @override
+  Future<ResultApi<HomeMovieEntity>> getRecommendedMovie() async {
+    final result = await _api.getRecommendedMovie();
+
+    switch (result) {
+      case SuccessApi<RecommendedMovieDto>():
+        final dto = result.data;
+        return SuccessApi(dto.toEntity());
+      case ErrorApi<RecommendedMovieDto>():
+        return ErrorApi<HomeMovieEntity>(result.errorMassage);
+    }
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\repo\data_source\home_releases_remote_data_source_imp.dart ===
+
+import 'package:injectable/injectable.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/data/api/home_releases_api.dart';
+import 'package:movie_app/feature/home/data/mapper/releases_movie_mapper.dart';
+import 'package:movie_app/feature/home/data/model/releases_movie_dto.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+import 'package:movie_app/feature/home/domain/repo/data_source/releases_data_source_interface.dart';
+
+@Injectable(as: ReleasesDataSourceInterface)
+class HomeReleasesRemoteDataSourceImp
+    implements ReleasesDataSourceInterface {
+  HomeReleasesRemoteDataSourceImp(this._api);
+  final HomeReleasesApi _api;
+
+  @override
+  Future<ResultApi<HomeMovieEntity>> getReleasesMovie() async {
+    final result = await _api.getReleasesMovie();
+
+    switch (result) {
+
+      case SuccessApi<ReleasesMovieDto>():
+        final dto = result.data;
+        return SuccessApi(dto.toEntity());
+        
+      case ErrorApi<ReleasesMovieDto>():
+        return ErrorApi<HomeMovieEntity>(result.errorMassage);
+    }
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\repo\repository\home_popolure_repository_imp.dart ===
+import 'package:injectable/injectable.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+import 'package:movie_app/feature/home/domain/repo/data_source/popolure_data_source_interface.dart';
+import 'package:movie_app/feature/home/domain/repo/repository/popolure_repository_interface.dart';
+
+@LazySingleton(as: PopolureRepositoryInterface)
+class HomePopolureRepositoryImp implements PopolureRepositoryInterface {
+  HomePopolureRepositoryImp(this._dataSource);
+  final PopolureDataSourceInterface _dataSource;
+
+  @override
+  Future<ResultApi<HomeMovieEntity>> getPopolureMovie() =>
+      _dataSource.getPopolureMovie();
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\repo\repository\home_recommended_repository_imp.dart ===
+import 'package:injectable/injectable.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+import 'package:movie_app/feature/home/domain/repo/data_source/recommended_data_source_interface.dart';
+import 'package:movie_app/feature/home/domain/repo/repository/recommended_repository_interface.dart';
+
+@LazySingleton(as: RecommendedRepositoryInterface)
+class HomeRecommendedRepositoryImp implements RecommendedRepositoryInterface {
+  HomeRecommendedRepositoryImp(this._dataSource);
+  final RecommendedDataSourceInterface _dataSource;
+
+  @override
+  Future<ResultApi<HomeMovieEntity>> getRecommendedMovie() =>
+      _dataSource.getRecommendedMovie();
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\data\repo\repository\home_releases_repository_imp.dart ===
+import 'package:injectable/injectable.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+import 'package:movie_app/feature/home/domain/repo/data_source/releases_data_source_interface.dart';
+import 'package:movie_app/feature/home/domain/repo/repository/releases_repository_interface.dart';
+
+@LazySingleton(as: ReleasesRepositoryInterface)
+class HomeReleasesRepositoryImp implements ReleasesRepositoryInterface {
+  HomeReleasesRepositoryImp(this._dataSource);
+  final ReleasesDataSourceInterface _dataSource;
+
+  @override
+  Future<ResultApi<HomeMovieEntity>> getReleasesMovie() =>
+      _dataSource.getReleasesMovie();
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\domain\entity\home_movie_entity.dart ===
+class HomeMovieEntity {
+  HomeMovieEntity({required this.results});
+
+  final List<MovieItemEntity> results;
+}
+
+class MovieItemEntity {
+  MovieItemEntity({required this.id, required this.posterPath});
+
+  final int id;
+  final String posterPath;
+  
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\domain\repo\data_source\popolure_data_source_interface.dart ===
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+
+abstract interface class PopolureDataSourceInterface {
+  Future<ResultApi<HomeMovieEntity>> getPopolureMovie();
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\domain\repo\data_source\recommended_data_source_interface.dart ===
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+
+abstract interface class RecommendedDataSourceInterface {
+  Future<ResultApi<HomeMovieEntity>> getRecommendedMovie();
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\domain\repo\data_source\releases_data_source_interface.dart ===
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+
+
+abstract interface class ReleasesDataSourceInterface {
+  Future<ResultApi<HomeMovieEntity>> getReleasesMovie();
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\domain\repo\repository\popolure_repository_interface.dart ===
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+
+abstract interface class PopolureRepositoryInterface {
+  Future<ResultApi<HomeMovieEntity>> getPopolureMovie();
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\domain\repo\repository\recommended_repository_interface.dart ===
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+
+abstract interface class RecommendedRepositoryInterface {
+    Future<ResultApi<HomeMovieEntity>> getRecommendedMovie();
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\domain\repo\repository\releases_repository_interface.dart ===
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+
+
+abstract interface class ReleasesRepositoryInterface {
+  Future<ResultApi<HomeMovieEntity>> getReleasesMovie();
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\domain\use_case\get_popolure_movie_use_case.dart ===
+import 'package:injectable/injectable.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+import 'package:movie_app/feature/home/domain/repo/repository/popolure_repository_interface.dart';
+
+@injectable
+class GetPopolureMovieUseCase {
+  GetPopolureMovieUseCase(this._repo);
+  final PopolureRepositoryInterface _repo;
+  Future<ResultApi<HomeMovieEntity>> invoke() =>
+      _repo.getPopolureMovie();
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\domain\use_case\get_recommended_movie_use_case.dart ===
+import 'package:injectable/injectable.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+
+import 'package:movie_app/feature/home/domain/repo/repository/recommended_repository_interface.dart';
+
+@injectable
+class GetRecommendedMovieUseCase {
+  GetRecommendedMovieUseCase(this._repo);
+
+  final RecommendedRepositoryInterface _repo;
+
+  Future<ResultApi<HomeMovieEntity>> invoke() =>
+      _repo.getRecommendedMovie();
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\domain\use_case\get_releases_movie_use_case.dart ===
+import 'package:injectable/injectable.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+import 'package:movie_app/feature/home/domain/repo/repository/releases_repository_interface.dart';
+
+@injectable
+class GetReleasesMovieUseCase {
+  GetReleasesMovieUseCase(this._repo);
+
+  final ReleasesRepositoryInterface _repo;
+
+  Future<ResultApi<HomeMovieEntity>> invoke() => _repo.getReleasesMovie();
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\presentation\view\home_screen.dart ===
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movie_app/core/di/service_locatore.dart';
+import 'package:movie_app/core/utils/app_colors.dart';
+import 'package:movie_app/core/widgets/cache_networkImage_widget.dart';
+import 'package:movie_app/feature/details/presentation/view/screens/details_movie_screen.dart';
+
+import 'package:movie_app/feature/home/presentation/view_model/home_cubit.dart';
+import 'package:movie_app/feature/home/presentation/widget/home_loading_shimmer.dart';
+
+class HomeScreen extends StatefulWidget {
+  static const String routeName = "HomeScreen";
+
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  List recommended = [];
+  List popular = [];
+  List releases = [];
+  bool isLoading = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => getIt<HomeCubit>()
+        ..getRecommendedMovie()
+        ..getPopolureMovie()
+        ..getReleasesMovie(),
+
+      child: Scaffold(
+        backgroundColor: AppColor.backgroundColor,
+
+        appBar: AppBar(backgroundColor: AppColor.backgroundColor),
+
+        body: BlocListener<HomeCubit, HomeState>(
+          listener: (context, state) {
+            if (state is HomeRecommendedSuccesses) {
+              recommended = state.recommendedMovieEntity.results;
+            }
+
+            if (state is HomePopolureSuccesses) {
+              popular = state.popolureMovieEntity.results;
+            }
+
+            if (state is HomeReleasesSuccesses) {
+              releases = state.releasesMovieEntity.results;
+            }
+
+            if (recommended.isNotEmpty ||
+                popular.isNotEmpty ||
+                releases.isNotEmpty) {
+              isLoading = false;
+            }
+
+            setState(() {});
+          },
+
+          child: BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              if (isLoading &&
+                  recommended.isEmpty &&
+                  popular.isEmpty &&
+                  releases.isEmpty) {
+                return Center(child: HomeLoadingShimmer());
+              }
+
+              return CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      child: Text(
+                        "Recommended",
+                        style: TextStyle(
+                          color: AppColor.primaryTextColor,
+                          fontSize: 22,
+                          fontWeight: .bold,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 260,
+                      child: ListView.builder(
+                        scrollDirection: .horizontal,
+                        itemCount: recommended.length,
+                        itemBuilder: (context, index) {
+                          final movie = recommended[index];
+
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return DetailsMovieScreen(id: movie.id);
+                                  },
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 160,
+                              margin: EdgeInsets.all(10),
+                              child: CacheNetworkImage(
+                                imageUrl: movie.posterPath,
+                                fit: .cover,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      child: Text(
+                        "Popular",
+                        style: TextStyle(
+                          color: AppColor.primaryTextColor,
+                          fontSize: 22,
+                          fontWeight: .bold,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 260,
+                      child: ListView.builder(
+                        scrollDirection: .horizontal,
+                        itemCount: popular.length,
+                        itemBuilder: (context, index) {
+                          final movie = popular[index];
+
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return DetailsMovieScreen(id: movie.id);
+                                  },
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 160,
+                              margin: EdgeInsets.all(10),
+                              child: CacheNetworkImage(
+                                imageUrl: movie.posterPath,
+                                fit: .cover,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      child: Text(
+                        "Releases",
+                        style: TextStyle(
+                          color: AppColor.primaryTextColor,
+                          fontSize: 22,
+                          fontWeight: .bold,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 260,
+                      child: ListView.builder(
+                        scrollDirection: .horizontal,
+                        itemCount: releases.length,
+                        itemBuilder: (context, index) {
+                          final movie = releases[index];
+
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) {
+                                    return DetailsMovieScreen(id: movie.id);
+                                  },
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: 160,
+                              margin: EdgeInsets.all(10),
+                              child: CacheNetworkImage(
+                                imageUrl: movie.posterPath,
+                                fit: .cover,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\presentation\view_model\home_cubit.dart ===
+import 'package:bloc/bloc.dart';
+import 'package:injectable/injectable.dart';
+import 'package:meta/meta.dart';
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
+
+import 'package:movie_app/feature/home/domain/use_case/get_popolure_movie_use_case.dart';
+import 'package:movie_app/feature/home/domain/use_case/get_recommended_movie_use_case.dart';
+import 'package:movie_app/feature/home/domain/use_case/get_releases_movie_use_case.dart';
+part 'home_state.dart';
+
+@injectable
+class HomeCubit extends Cubit<HomeState> {
+  HomeCubit(
+    this._getRecommendedMovieUseCase,
+    this._getPopolureMovieUseCase,
+    this._getReleasesMovieUseCase,
+  ) : super(HomeInitial());
+  final GetRecommendedMovieUseCase _getRecommendedMovieUseCase;
+  final GetPopolureMovieUseCase _getPopolureMovieUseCase;
+  final GetReleasesMovieUseCase _getReleasesMovieUseCase;
+
+  Future<void> getRecommendedMovie() async {
+    emit(HomeLoading());
+    final result = await _getRecommendedMovieUseCase.invoke();
+
+    switch (result) {
+      case SuccessApi<HomeMovieEntity>():
+        emit(HomeRecommendedSuccesses(result.data));
+      case ErrorApi<HomeMovieEntity>():
+        emit(HomeRecommendedError(result.errorMassage));
+    }
+  }
+
+  Future<void> getPopolureMovie() async {
+    emit(HomeLoading());
+    final result = await _getPopolureMovieUseCase.invoke();
+
+    switch (result) {
+      case SuccessApi<HomeMovieEntity>():
+        emit(HomePopolureSuccesses(result.data));
+      case ErrorApi<HomeMovieEntity>():
+        emit(HomePopolureError(result.errorMassage));
+    }
+  }
+
+  Future<void> getReleasesMovie() async {
+    emit(HomeLoading());
+    final result = await _getReleasesMovieUseCase.invoke();
+
+    switch (result) {
+      case SuccessApi<HomeMovieEntity>():
+        emit(HomeReleasesSuccesses(result.data));
+      case ErrorApi<HomeMovieEntity>():
+        emit(HomeReleasesError(result.errorMassage));
+    }
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\presentation\view_model\home_state.dart ===
+
+part of 'home_cubit.dart';
+
+@immutable
+abstract class HomeState {}
+
+class HomeInitial extends HomeState {}
+
+class HomeLoading extends HomeState {}
+// class HomeRecommendedLoading extends HomeState {}
+
+// class HomePopolureLoading extends HomeState {}
+
+// class HomeReleasesLoading extends HomeState {}
+
+class HomeRecommendedSuccesses extends HomeState {
+  HomeRecommendedSuccesses(this.recommendedMovieEntity);
+  final HomeMovieEntity recommendedMovieEntity;
+}
+
+class HomePopolureSuccesses extends HomeState {
+  HomePopolureSuccesses(this.popolureMovieEntity);
+  final HomeMovieEntity popolureMovieEntity;
+}
+class HomeReleasesSuccesses extends HomeState {
+  HomeReleasesSuccesses(this.releasesMovieEntity);
+  final HomeMovieEntity releasesMovieEntity;
+}
+
+
+class HomeRecommendedError extends HomeState {
+  HomeRecommendedError(this.messageError);
+  final String messageError;
+}
+
+class HomePopolureError extends HomeState {
+  HomePopolureError(this.messageError);
+  final String messageError;
+}
+
+class HomeReleasesError extends HomeState {
+  HomeReleasesError(this.messageError);
+  final String messageError;
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\home\presentation\widget\home_loading_shimmer.dart ===
+import 'package:flutter/material.dart';
+import 'package:movie_app/core/widgets/loading_shimmer.widget.dart';
+
+class HomeLoadingShimmer extends StatelessWidget {
+  const HomeLoadingShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          _section(),
+          _list(),
+          _section(),
+          _list(),
+          _section(),
+          _list(),
+        ],
+      ),
+    );
+  }
+
+  Widget _section() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: LoadingShimmer(
+          width: 140,
+          height: 20,
+          borderRadius: BorderRadius.circular(6),
+        ),
+      ),
+    );
+  }
+
+  Widget _list() {
+    return SizedBox(
+      height: 260,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 6,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.all(10),
+            child: LoadingShimmer(
+              width: 160,
+              height: 240,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\menu_drawer\view\menu_drawer_screen .dart ===
+import 'dart:developer';
+
+import 'package:flutter/material.dart';
+
+class MenuDrawer extends StatelessWidget {
+  const MenuDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      backgroundColor: const Color(0xff0f0f0f),
+      child: Column(
+        children: [
+          Container(
+            height: 180,
+            width: double.infinity,
+            padding: const EdgeInsets.only(left: 16, bottom: 16),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xff1f1f1f), Color(0xff0f0f0f)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 30,
+                    backgroundImage: NetworkImage(
+                      "https://images.theconversation.com/files/651621/original/file-20250226-32-jxjhmy.jpg?ixlib=rb-4.1.0&rect=0%2C0%2C5991%2C3997&q=20&auto=format&w=320&fit=clip&dpr=2&usm=12&cs=strip",
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        "Movie Explorer",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        "Discover your next movie",
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          _DrawerItem(
+            icon: Icons.movie_creation_outlined,
+            title: "Movies",
+            color: Colors.white,
+            onTap: () {
+              log(" ط´ط؛ط§ظ„ ظٹظپظ†ط§ظ†");
+            },
+          ),
+
+          _DrawerItem(
+            icon: Icons.bookmark_border,
+            title: "Watchlist",
+            color: Colors.amber,
+            onTap: () {
+              log(" ط´ط؛ط§ظ„ ظٹظپظ†ط§ظ†");
+            },
+          ),
+
+          _DrawerItem(
+            icon: Icons.search,
+            title: "Search",
+            color: Colors.white,
+            onTap: () {
+              log("ط§ظ„ط³ظٹط±ط´ ط´ط؛ط§ظ„ ظٹظپظ†ط§ظ†");
+            },
+          ),
+
+          _DrawerItem(
+            icon: Icons.trending_up,
+            title: "Trending",
+            color: Colors.redAccent,
+            onTap: () {
+              log(" ط§ظ„طھط±ظ†ط¯ط¬ ط´ط؛ط§ظ„ ظٹظپظ†ط§ظ†");
+            },
+          ),
+
+          const Spacer(),
+
+          const Divider(color: Colors.grey),
+
+          _DrawerItem(
+            icon: Icons.settings_outlined,
+            title: "Settings",
+            color: Colors.white70,
+            onTap: () {
+              log(" ط§ظ„ط³ظٹطھظ†ط¬ ط´ط؛ط§ظ„ ظٹظپظ†ط§ظ†");
+            },
+          ),
+
+          _DrawerItem(
+            icon: Icons.logout,
+            title: "Logout",
+            color: Colors.red,
+            onTap: () {
+              log(" ط´ط؛ط§ظ„ ظٹظپظ†ط§ظ†  ط§ظ„ ظ„ظˆط¬ ط§ظˆطھ");
+            },
+          ),
+
+          const SizedBox(height: 10),
+        ],
+      ),
+    );
+  }
+}
+
+class _DrawerItem extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _DrawerItem({
+    required this.icon,
+    required this.title,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(icon, color: color),
+      title: Text(
+        title,
+        style: const TextStyle(color: Color(0xffFFFFFF), fontSize: 16),
+      ),
+      hoverColor: Colors.white10,
+      onTap: () {
+        // Navigator.pop(context);
+        onTap();
+      },
+    );
+  }
+}
+
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\search\data\api\home_search_api.dart ===
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
+import '../models/movie_model.dart';
+
+class HomeSearchApi {
+  Future<MovieDto> searchMovies(String query) async {
+    final uri = Uri.https("api.themoviedb.org", "/3/search/movie", {
+      "query": query,
+      "api_key": "9d7f94be913eddf2db40e317d2f12f36",
+    });
+
+    final response = await http.get(uri);
+
+    final json = jsonDecode(response.body);
+
+    return MovieDto.fromJson(json);
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\search\data\models\movie_model.dart ===
+import 'package:movie_app/feature/search/domain/entities/movie_entity.dart';
+
+class MovieDto {
+  MovieDto({this.page, this.results, this.totalPages, this.totalResults});
+  int? page;
+
+  List<MovieDataModel>? results;
+
+  int? totalPages;
+
+  int? totalResults;
+
+  MovieDto.fromJson(Map<String, dynamic> json) {
+    page = json['page'];
+
+    if (json['results'] != null) {
+      results = <MovieDataModel>[];
+
+      json['results'].forEach((v) {
+        results!.add(MovieDataModel.fromJson(v));
+      });
+    }
+
+    totalPages = json['total_pages'];
+
+    totalResults = json['total_results'];
+  }
+}
+
+class MovieDataModel {
+
+  MovieDataModel({
+    this.adult,
+    this.backdropPath,
+    this.genreIds,
+    this.id,
+    this.title,
+    this.originalLanguage,
+    this.originalTitle,
+    this.overview,
+    this.popularity,
+    this.posterPath,
+    this.releaseDate,
+    this.softcore,
+    this.video,
+    this.voteAverage,
+    this.voteCount,
+  });
+  bool? adult;
+
+  String? backdropPath;
+
+  List<int>? genreIds;
+
+  int? id;
+
+  String? title;
+
+  String? originalLanguage;
+
+  String? originalTitle;
+
+  String? overview;
+
+  double? popularity;
+
+  String? posterPath;
+
+  String? releaseDate;
+
+  bool? softcore;
+
+  bool? video;
+
+  double? voteAverage;
+
+  int? voteCount;
+
+  MovieDataModel.fromJson(Map<String, dynamic> json) {
+    adult = json['adult'];
+
+    backdropPath = json['backdrop_path'];
+
+    genreIds = json['genre_ids']?.cast<int>();
+
+    id = json['id'];
+
+    title = json['title'];
+
+    originalLanguage = json['original_language'];
+
+    originalTitle = json['original_title'];
+
+    overview = json['overview'];
+
+    popularity = (json['popularity'] as num?)?.toDouble();
+
+    posterPath = json['poster_path'];
+
+    releaseDate = json['release_date'];
+
+    softcore = json['softcore'];
+
+    video = json['video'];
+
+    voteAverage = (json['vote_average'] as num?)?.toDouble();
+
+    voteCount = json['vote_count'];
+  }
+
+  MovieEntity toEntity() {
+    return MovieEntity(
+      id: id ?? 0,
+
+      title: title ?? "No Title",
+
+      image: (posterPath != null)
+          ? "https://image.tmdb.org/t/p/w500$posterPath"
+          : "https://img.pikbest.com/backgrounds/20190729/white-wrinkled-paper-background-image_2769903.jpg!w700wp",
+
+      voteAverage: voteAverage ?? 0.0,
+
+      publishDate: releaseDate?.split('-').first ?? "0000",
+
+      overview: overview ?? "No Description",
+
+      genre: getGenre(),
+    );
+  }
+
+  String getGenre() {
+    if (genreIds == null || genreIds!.isEmpty) {
+      return "Movie";
+    }
+
+    final genres = {
+      28: "Action",
+
+      12: "Adventure",
+
+      16: "Animation",
+
+      35: "Comedy",
+
+      18: "Drama",
+
+      27: "Horror",
+
+      878: "Sci-Fi",
+
+      53: "Thriller",
+    };
+
+    return genres[genreIds!.first] ?? "Movie";
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\search\data\repo\search_repository_imp.dart ===
+import 'package:http/http.dart' as http;
+
+import 'package:movie_app/core/network/result_api.dart';
+
+import '../../domain/entities/movie_entity.dart';
+import '../../domain/repo/search_repository.dart';
+
+import '../api/home_search_api.dart';
+
+class SearchRepositoryImpl implements SearchRepository {
+  SearchRepositoryImpl(this.remoteDataSource);
+  final HomeSearchApi remoteDataSource;
+
+  @override
+  Future<ResultApi<List<MovieEntity>>> searchMovies(String query) async {
+    try {
+      final response = await remoteDataSource.searchMovies(query);
+
+      final movies = response.results?.map((e) => e.toEntity()).toList() ?? [];
+
+      return SuccessApi(movies);
+    } on http.ClientException {
+      return ErrorApi("Please Check Your Internet Connection");
+    } catch (e) {
+      return ErrorApi(e.toString());
+    }
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\search\domain\entities\movie_entity.dart ===
+class MovieEntity {
+  MovieEntity({
+    this.id = 0,
+    this.title = "",
+    this.image = "",
+    this.voteAverage = 0.0,
+    this.publishDate = "",
+    this.overview = "",
+    this.genre = "",
+  });
+
+  final int id;
+
+  final String title;
+
+  final String image;
+
+  final double voteAverage;
+
+  final String publishDate;
+
+  final String overview;
+
+  final String genre;
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\search\domain\repo\search_repository.dart ===
+import 'package:movie_app/core/network/result_api.dart';
+import 'package:movie_app/feature/search/domain/entities/movie_entity.dart';
+
+
+abstract interface class SearchRepository {
+  Future<ResultApi<List<MovieEntity>>> searchMovies(
+    String query,
+  );
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\search\domain\use_case\search_movies_use_case.dart ===
+import 'package:movie_app/core/network/result_api.dart';
+
+import '../entities/movie_entity.dart';
+import '../repo/search_repository.dart';
+
+class SearchMoviesUseCase {
+  SearchMoviesUseCase(this.repository);
+  final SearchRepository repository;
+
+  Future<ResultApi<List<MovieEntity>>> invoke(String query) {
+    return repository.searchMovies(query);
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\search\presentation\view\screen\invalid_search_screen.dart ===
+import 'package:flutter/material.dart';
+
+import 'package:movie_app/core/utils/app_colors.dart';
+import 'package:movie_app/core/utils/assets_image.dart';
+
+class InvalidSearchScreen extends StatelessWidget {
+  static const String routeName = "InvalidSearchScreen";
+
+  const InvalidSearchScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+
+          children: [
+            Image.asset(AssetsImage.NoResultSearch, height: 140),
+
+            SizedBox(height: 30),
+
+            Text(
+              "We Are Sorry, We Can\nNot Find The Movie ",
+
+              textAlign: .center,
+
+              style: TextStyle(
+                fontSize: 18,
+
+                fontWeight: .w600,
+
+                color: AppColor.primaryTextColor,
+
+                height: 1.4,
+              ),
+            ),
+
+            SizedBox(height: 12),
+
+            Text(
+              "Find your movie by Type title,\ncategories, years, etc",
+
+              textAlign: .center,
+
+              style: TextStyle(
+                fontSize: 14,
+
+                color: AppColor.SecoundryTextColor,
+
+                height: 1.5,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\search\presentation\view\screen\search_screen.dart ===
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:movie_app/core/common/app_bar.dart';
+import 'package:movie_app/core/common/search_bar.dart';
+
+import 'package:movie_app/core/dialogs/show_error_ui.dart';
+
+import 'package:movie_app/core/utils/app_colors.dart';
+import 'package:movie_app/core/widgets/loading_shimmer.widget.dart';
+
+import 'package:movie_app/feature/menu_drawer/view/menu_drawer_screen .dart';
+
+import 'package:movie_app/feature/search/data/api/home_search_api.dart';
+
+import 'package:movie_app/feature/search/data/repo/search_repository_imp.dart';
+
+import 'package:movie_app/feature/search/domain/use_case/search_movies_use_case.dart';
+
+import 'package:movie_app/feature/search/presentation/view/screen/invalid_search_screen.dart';
+
+import 'package:movie_app/feature/search/presentation/view/widget/movie_item.dart';
+
+import '../../view_model/cubit/search_cubit.dart';
+
+class SearchScreen extends StatelessWidget {
+  static const String routeName = "SearchScreen";
+
+  const SearchScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => SearchCubit(
+        SearchMoviesUseCase(SearchRepositoryImpl(HomeSearchApi())),
+      ),
+
+      child: const _SearchScreenBody(),
+    );
+  }
+}
+
+class _SearchScreenBody extends StatefulWidget {
+  const _SearchScreenBody();
+
+  @override
+  State<_SearchScreenBody> createState() => _SearchScreenBodyState();
+}
+
+class _SearchScreenBodyState extends State<_SearchScreenBody> {
+  final TextEditingController controller = TextEditingController();
+
+  Timer? debounce;
+
+  @override
+  void dispose() {
+    debounce?.cancel();
+
+    controller.dispose();
+
+    super.dispose();
+  }
+
+  void onSearchChanged(String value) {
+    if (debounce?.isActive ?? false) {
+      debounce!.cancel();
+    }
+
+    debounce = Timer(const Duration(milliseconds: 500), () {
+      if (value.trim().isNotEmpty) {
+        context.read<SearchCubit>().searchMovies(value);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColor.backgroundColor,
+
+      endDrawer: MenuDrawer(),
+
+      appBar: CustomAppBar(title: "Search"),
+
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+
+        child: Column(
+          children: [
+            CustomSearchBar(
+              controller: controller,
+
+              onSubmitted: (value) {},
+
+              onChanged: onSearchChanged,
+            ),
+
+            const SizedBox(height: 10),
+
+            Expanded(
+              child: BlocConsumer<SearchCubit, SearchState>(
+                listener: (context, state) {
+                  if (state is SearchError) {
+                    AppErrorHandler.unknown(context, state.error);
+                  }
+                },
+
+                builder: (context, state) {
+                  if (state is SearchLoading) {
+                    return ListView.builder(
+                      itemCount: 6,
+
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+
+                          child: Row(
+                            children: [
+                              LoadingShimmer(
+                                width: 100,
+
+                                height: 140,
+
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+
+                              const SizedBox(width: 14),
+
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                                  children: [
+                                    LoadingShimmer(
+                                      height: 24,
+
+                                      width: 180,
+
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+
+                                    const SizedBox(height: 18),
+
+                                    LoadingShimmer(
+                                      height: 18,
+
+                                      width: 80,
+
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+
+                                    const SizedBox(height: 14),
+
+                                    LoadingShimmer(
+                                      height: 18,
+
+                                      width: 120,
+
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+
+                                    const SizedBox(height: 14),
+
+                                    LoadingShimmer(
+                                      height: 18,
+
+                                      width: 100,
+
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  }
+
+                  if (state is SearchEmpty) {
+                    return const InvalidSearchScreen();
+                  }
+
+                  if (state is SearchError) {
+                    return const InvalidSearchScreen();
+                  }
+
+                  if (state is SearchSuccess) {
+                    return ListView.builder(
+                      itemCount: state.movies.length,
+
+                      itemBuilder: (context, index) {
+                        return MovieItem(movie: state.movies[index],  query: state.query);
+                      },
+                    );
+                  }
+
+                  return const SizedBox();
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\search\presentation\view\widget\movie_item.dart ===
+import 'package:flutter/material.dart';
+
+import 'package:movie_app/core/utils/app_colors.dart';
+import 'package:movie_app/core/utils/assets_icons.dart';
+import 'package:movie_app/core/widgets/cache_networkImage_widget.dart';
+import 'package:movie_app/feature/details/presentation/view/screens/details_movie_screen.dart';
+
+
+
+import 'package:movie_app/feature/search/domain/entities/movie_entity.dart';
+
+class MovieItem extends StatelessWidget {
+  final MovieEntity movie;
+
+  final String query;
+
+  const MovieItem({super.key, required this.movie, required this.query});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+       Navigator.push(
+          context,
+
+          MaterialPageRoute(
+            builder: (context) {
+              return DetailsMovieScreen(id: movie.id);
+            },
+          ),
+        );
+      },
+
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 14),
+
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+
+          children: [
+            CacheNetworkImage(
+              imageUrl: movie.image,
+
+              width: 100,
+
+              height: 140,
+
+              borderRadius: BorderRadius.circular(16),
+            ),
+
+            SizedBox(width: 14),
+
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+
+                children: [
+                  RichText(
+                    maxLines: 1,
+
+                    overflow: TextOverflow.ellipsis,
+
+                    text: TextSpan(
+                      children: highlightText(movie.title, query),
+
+                      style: TextStyle(
+                        fontSize: 24,
+
+                        fontWeight: FontWeight.w500,
+
+                        color: AppColor.primaryTextColor,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 14),
+
+                  Row(
+                    children: [
+                      Icon(Icons.star_border, color: Colors.orange, size: 20),
+
+                      SizedBox(width: 6),
+
+                      Text(
+                        movie.voteAverage.toStringAsFixed(1),
+
+                        style: TextStyle(
+                          color: Colors.orange,
+
+                          fontSize: 18,
+
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 10),
+
+                  Row(
+                    children: [
+                      Image.asset(AssetsIcon.type_movie_icon),
+
+                      SizedBox(width: 8),
+
+                      Text(
+                        movie.genre,
+
+                        style: TextStyle(
+                          fontSize: 18,
+
+                          fontWeight: FontWeight.w400,
+
+                          color: Color(0xffFFFFFF),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 10),
+
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_today_outlined,
+
+                        color: Colors.white70,
+
+                        size: 18,
+                      ),
+
+                      SizedBox(width: 8),
+
+                      Text(
+                        movie.publishDate,
+
+                        style: TextStyle(color: Colors.white70, fontSize: 18),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 10),
+
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time_outlined,
+
+                        color: Colors.white70,
+
+                        size: 18,
+                      ),
+
+                      SizedBox(width: 8),
+
+                      Text(
+                        "139 minutes",
+
+                        style: TextStyle(color: Colors.white70, fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<TextSpan> highlightText(String text, String query) {
+    if (query.isEmpty) {
+      return [TextSpan(text: text)];
+    }
+
+    final matches = RegExp(query, caseSensitive: false);
+
+    final spans = <TextSpan>[];
+
+    int start = 0;
+
+    for (final match in matches.allMatches(text)) {
+      if (match.start > start) {
+        spans.add(TextSpan(text: text.substring(start, match.start)));
+      }
+
+      spans.add(
+        TextSpan(
+          text: text.substring(match.start, match.end),
+
+          style: TextStyle(color: Colors.yellow, fontWeight: FontWeight.bold),
+        ),
+      );
+
+      start = match.end;
+    }
+
+    if (start < text.length) {
+      spans.add(TextSpan(text: text.substring(start)));
+    }
+
+    return spans;
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\search\presentation\view_model\cubit\search_cubit.dart ===
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:movie_app/feature/search/domain/entities/movie_entity.dart';
+
+import 'package:movie_app/core/network/result_api.dart';
+
+import '../../../domain/use_case/search_movies_use_case.dart';
+
+part 'search_state.dart';
+
+class SearchCubit extends Cubit<SearchState> {
+  SearchCubit(this.useCase) : super(SearchInitial());
+  final SearchMoviesUseCase useCase;
+
+  Future<void> searchMovies(String query) async {
+    final result = await useCase.invoke(query);
+    emit(SearchLoading());
+
+
+    switch (result) {
+      case SuccessApi():
+        final movies = result.data
+            .where(
+              (movie) =>
+                  movie.title.toLowerCase().contains(query.toLowerCase()),
+            )
+            .toList();
+
+        if (movies.isEmpty) {
+          emit(SearchEmpty());
+        } else {
+          emit(SearchSuccess(movies, query));
+        }
+
+      case ErrorApi():
+        emit(SearchError(result.errorMassage));
+    }
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\search\presentation\view_model\cubit\search_state.dart ===
+part of 'search_cubit.dart';
+
+abstract class SearchState {}
+
+ class SearchInitial extends SearchState {}
+
+ class SearchLoading extends SearchState {}
+
+ class SearchEmpty extends SearchState {}
+
+ class SearchSuccess extends SearchState {
+  final List<MovieEntity> movies;
+  SearchSuccess(this.movies, this.query);
+  final String query;
+
+}
+
+ class SearchError extends SearchState {
+  final String error;
+
+  SearchError(this.error);
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\lib\feature\watch_list\presentation\view\watch_list.dart ===
+import 'package:flutter/material.dart';
+
+import 'package:movie_app/feature/menu_drawer/view/menu_drawer_screen%20.dart';
+
+import 'package:movie_app/core/common/app_bar.dart';
+
+class WatchList extends StatelessWidget {
+  static const String routeName = "WatchList";
+  const WatchList({super.key});
+
+  @override
+  Widget build(context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      endDrawer: MenuDrawer(),
+      appBar: CustomAppBar(title: "Watch List"),
+    );
+  }
+}
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\linux\flutter\ephemeral\.plugin_symlinks\jni\example\pubspec.yaml ===
+name: jni_example
+description: Demonstrates how to use the jni plugin.
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  ffi: ^2.0.0
+  jni: ^1.0.0
+
+  jni_flutter:
+    path: ../../jni_flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.2
+
+dependency_overrides:
+  jni:
+    path: ..
+
+dev_dependencies:
+  test: any
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^6.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\linux\flutter\ephemeral\.plugin_symlinks\jni\pubspec.yaml ===
+# Copyright (c) 2022, the Dart project authors.  Please see the AUTHORS file
+# for details. All rights reserved. Use of this source code is governed by a
+# BSD-style license that can be found in the LICENSE file.
+
+name: jni
+description: A library to access JNI from Dart and Flutter that acts as a support library for package:jnigen.
+version: 1.0.0
+repository: https://github.com/dart-lang/native/tree/main/pkgs/jni
+issue_tracker: https://github.com/dart-lang/native/issues?q=is%3Aissue+is%3Aopen+label%3Apackage%3Ajni
+
+topics:
+  - interop
+  - ffi
+  - java
+  - kotlin
+  - jni
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.35.6'
+
+dependencies:
+  args: ^2.5.0
+  collection: ^1.19.1
+  ffi: ^2.1.3
+  meta: ^1.15.0
+  package_config: ^2.1.0
+  path: ^1.9.0
+  plugin_platform_interface: ^2.1.8
+
+dev_dependencies:
+  dart_flutter_team_lints: ^3.5.2
+  dart_style: ^3.1.2
+  ffigen:
+    path: ../ffigen
+  jnigen:
+    path: ../jnigen
+  logging: ^1.2.0
+  test: ^1.25.8
+
+# The following section is specific to Flutter packages.
+flutter:
+  plugin:
+    platforms:
+      linux:
+        ffiPlugin: true
+      windows:
+        ffiPlugin: true
+      android:
+        ffiPlugin: true
+        package: com.github.dart_lang.jni
+        pluginClass: JniPlugin
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\linux\flutter\ephemeral\.plugin_symlinks\path_provider_linux\example\pubspec.yaml ===
+name: pathproviderexample
+description: Demonstrates how to use the path_provider_linux plugin.
+publish_to: "none"
+
+environment:
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.7.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  path_provider_linux:
+    # When depending on this package from a real application you should use:
+    #   path_provider_linux: ^x.y.z
+    # See https://dart.dev/tools/pub/dependencies#version-constraints
+    # The example app is bundled with the plugin so we use a path dependency on
+    # the parent directory to use the current plugin's version.
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\linux\flutter\ephemeral\.plugin_symlinks\path_provider_linux\pubspec.yaml ===
+name: path_provider_linux
+description: Linux implementation of the path_provider plugin
+repository: https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider_linux
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+path_provider%22
+version: 2.2.1
+
+environment:
+  sdk: ">=2.19.0 <4.0.0"
+  flutter: ">=3.7.0"
+
+flutter:
+  plugin:
+    implements: path_provider
+    platforms:
+      linux:
+        dartPluginClass: PathProviderLinux
+
+dependencies:
+  ffi: ">=1.1.2 <3.0.0"
+  flutter:
+    sdk: flutter
+  path: ^1.8.0
+  path_provider_platform_interface: ^2.1.0
+  xdg_directories: ">=0.2.0 <2.0.0"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+topics:
+  - files
+  - path-provider
+  - paths
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\windows\flutter\ephemeral\.plugin_symlinks\jni\example\pubspec.yaml ===
+name: jni_example
+description: Demonstrates how to use the jni plugin.
+
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  ffi: ^2.0.0
+  jni: ^1.0.0
+
+  jni_flutter:
+    path: ../../jni_flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.2
+
+dependency_overrides:
+  jni:
+    path: ..
+
+dev_dependencies:
+  test: any
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^6.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  # assets:
+  #   - images/a_dot_burr.jpeg
+  #   - images/a_dot_ham.jpeg
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\windows\flutter\ephemeral\.plugin_symlinks\jni\pubspec.yaml ===
+# Copyright (c) 2022, the Dart project authors.  Please see the AUTHORS file
+# for details. All rights reserved. Use of this source code is governed by a
+# BSD-style license that can be found in the LICENSE file.
+
+name: jni
+description: A library to access JNI from Dart and Flutter that acts as a support library for package:jnigen.
+version: 1.0.0
+repository: https://github.com/dart-lang/native/tree/main/pkgs/jni
+issue_tracker: https://github.com/dart-lang/native/issues?q=is%3Aissue+is%3Aopen+label%3Apackage%3Ajni
+
+topics:
+  - interop
+  - ffi
+  - java
+  - kotlin
+  - jni
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: '>=3.35.6'
+
+dependencies:
+  args: ^2.5.0
+  collection: ^1.19.1
+  ffi: ^2.1.3
+  meta: ^1.15.0
+  package_config: ^2.1.0
+  path: ^1.9.0
+  plugin_platform_interface: ^2.1.8
+
+dev_dependencies:
+  dart_flutter_team_lints: ^3.5.2
+  dart_style: ^3.1.2
+  ffigen:
+    path: ../ffigen
+  jnigen:
+    path: ../jnigen
+  logging: ^1.2.0
+  test: ^1.25.8
+
+# The following section is specific to Flutter packages.
+flutter:
+  plugin:
+    platforms:
+      linux:
+        ffiPlugin: true
+      windows:
+        ffiPlugin: true
+      android:
+        ffiPlugin: true
+        package: com.github.dart_lang.jni
+        pluginClass: JniPlugin
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\windows\flutter\ephemeral\.plugin_symlinks\path_provider_windows\example\pubspec.yaml ===
+name: path_provider_example
+description: Demonstrates how to use the path_provider plugin.
+publish_to: none
+
+environment:
+  sdk: ^3.2.0
+  flutter: ">=3.16.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  path_provider_windows:
+    # When depending on this package from a real application you should use:
+    #   path_provider_windows: ^x.y.z
+    # See https://dart.dev/tools/pub/dependencies#version-constraints
+    # The example app is bundled with the plugin so we use a path dependency on
+    # the parent directory to use the current plugin's version.
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\windows\flutter\ephemeral\.plugin_symlinks\path_provider_windows\pubspec.yaml ===
+name: path_provider_windows
+description: Windows implementation of the path_provider plugin
+repository: https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider_windows
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+path_provider%22
+version: 2.3.0
+
+environment:
+  sdk: ^3.2.0
+  flutter: ">=3.16.0"
+
+flutter:
+  plugin:
+    implements: path_provider
+    platforms:
+      windows:
+        dartPluginClass: PathProviderWindows
+
+dependencies:
+  ffi: ^2.0.0
+  flutter:
+    sdk: flutter
+  path: ^1.8.0
+  path_provider_platform_interface: ^2.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+topics:
+  - files
+  - path-provider
+  - paths
+=== C:\Users\Dell\Desktop\FLutter\Projict_Nti_Gradeution\movie_app\pubspec.yaml ===
+name: movie_app
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.5
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.8
+  flutter_native_splash: ^2.4.7
+  loading_animation_widget: ^1.3.0
+  toastification: ^3.2.0
+  cached_network_image: ^3.4.1
+  http: ^1.6.0
+  flutter_bloc: ^9.1.1
+  injectable: ^3.0.0
+  get_it: ^9.2.1
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+  injectable_generator: ^3.0.2
+  build_runner: ^2.15.0
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/app_icon.png"
+  adaptive_icon_background: "#0F1014"
+  adaptive_icon_foreground: "assets/icons/app_icon.png"
+  remove_alpha_ios: true
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/icons/
+    - assets/images/
+    
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/to/resolution-aware-images
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/to/asset-from-package
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: fonts/Schyler-Italic.ttf
+  #         style: italic
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package
