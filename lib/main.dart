@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       initialRoute: AppSectionView.routeName,
       routes: {
         AppSectionView.routeName: (context) => const AppSectionView(),

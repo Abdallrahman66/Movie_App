@@ -4,6 +4,8 @@ import 'package:movie_app/feature/menu_drawer/view/menu_drawer_screen%20.dart';
 
 import 'package:movie_app/core/common/app_bar.dart';
 
+import '../../../../core/utils/app_colors.dart';
+
 class WatchList extends StatelessWidget {
   static const String routeName = "WatchList";
   const WatchList({super.key});
@@ -11,7 +13,7 @@ class WatchList extends StatelessWidget {
   @override
   Widget build(context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColor.backgroundColor,
       endDrawer: MenuDrawer(),
       appBar: CustomAppBar(title: "Watch List"),
     );

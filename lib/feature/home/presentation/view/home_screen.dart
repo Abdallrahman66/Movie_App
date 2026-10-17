@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:movie_app/core/di/service_locatore.dart';
 import 'package:movie_app/core/utils/app_colors.dart';
 import 'package:movie_app/core/widgets/cache_networkImage_widget.dart';
-import 'package:movie_app/feature/details/presentation/view/screens/details_movie_screen.dart';
 
+import 'package:movie_app/feature/details/presentation/view/screens/details_movie_screen.dart';
+import 'package:movie_app/feature/home/presentation/widget/recommended.dart';
 import 'package:movie_app/feature/home/presentation/view_model/home_cubit.dart';
 import 'package:movie_app/feature/home/presentation/widget/home_loading_shimmer.dart';
 
@@ -18,9 +20,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List recommended = [];
-  List popular = [];
-  List releases = [];
+  List<dynamic> recommended = [];
+  List<dynamic> popular = [];
+  List<dynamic> releases = [];
+
   bool isLoading = true;
 
   @override
@@ -30,12 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ..getRecommendedMovie()
         ..getPopolureMovie()
         ..getReleasesMovie(),
-
       child: Scaffold(
         backgroundColor: AppColor.backgroundColor,
-
         appBar: AppBar(backgroundColor: AppColor.backgroundColor),
-
         body: BlocListener<HomeCubit, HomeState>(
           listener: (context, state) {
             if (state is HomeRecommendedSuccesses) {
@@ -58,21 +58,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
             setState(() {});
           },
-
           child: BlocBuilder<HomeCubit, HomeState>(
             builder: (context, state) {
               if (isLoading &&
                   recommended.isEmpty &&
                   popular.isEmpty &&
                   releases.isEmpty) {
-                return Center(child: HomeLoadingShimmer());
+                return const Center(child: HomeLoadingShimmer());
               }
 
               return CustomScrollView(
                 slivers: [
+                  // ==========================================
+                  // Recommended
+                  // ==========================================
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 10,
                       ),
@@ -81,50 +83,35 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                           color: AppColor.primaryTextColor,
                           fontSize: 22,
-                          fontWeight: .bold,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
                   ),
 
                   SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: 260,
-                      child: ListView.builder(
-                        scrollDirection: .horizontal,
-                        itemCount: recommended.length,
-                        itemBuilder: (context, index) {
-                          final movie = recommended[index];
+                    child: RecommendedMovieCarousel(
+                      movies: recommended,
 
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return DetailsMovieScreen(id: movie.id);
-                                  },
-                                ),
-                              );
+                      onMovieTap: (movie) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return DetailsMovieScreen(id: movie.id);
                             },
-                            child: Container(
-                              width: 160,
-                              margin: EdgeInsets.all(10),
-                              child: CacheNetworkImage(
-                                imageUrl: movie.posterPath,
-                                fit: .cover,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
                     ),
                   ),
 
+                  // ==========================================
+                  // Popular
+                  // ==========================================
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 10,
                       ),
@@ -133,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                           color: AppColor.primaryTextColor,
                           fontSize: 22,
-                          fontWeight: .bold,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -143,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: SizedBox(
                       height: 260,
                       child: ListView.builder(
-                        scrollDirection: .horizontal,
+                        scrollDirection: Axis.horizontal,
                         itemCount: popular.length,
                         itemBuilder: (context, index) {
                           final movie = popular[index];
@@ -161,10 +148,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             child: Container(
                               width: 160,
-                              margin: EdgeInsets.all(10),
+                              margin: const EdgeInsets.all(10),
                               child: CacheNetworkImage(
                                 imageUrl: movie.posterPath,
-                                fit: .cover,
+                                fit: BoxFit.cover,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
@@ -174,9 +161,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
+                  // ==========================================
+                  // Releases
+                  // ==========================================
                   SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 10,
                       ),
@@ -185,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(
                           color: AppColor.primaryTextColor,
                           fontSize: 22,
-                          fontWeight: .bold,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
@@ -195,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: SizedBox(
                       height: 260,
                       child: ListView.builder(
-                        scrollDirection: .horizontal,
+                        scrollDirection: Axis.horizontal,
                         itemCount: releases.length,
                         itemBuilder: (context, index) {
                           final movie = releases[index];
@@ -213,10 +203,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                             child: Container(
                               width: 160,
-                              margin: EdgeInsets.all(10),
+                              margin: const EdgeInsets.all(10),
                               child: CacheNetworkImage(
                                 imageUrl: movie.posterPath,
-                                fit: .cover,
+                                fit: BoxFit.cover,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
