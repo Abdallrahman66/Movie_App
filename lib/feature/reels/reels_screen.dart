@@ -8,7 +8,6 @@ class ReleasesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       backgroundColor: AppColor.backgroundColor,
       body: Center(
         child: Text(

@@ -71,7 +71,6 @@ class _DetailsMovieScreenState extends State<DetailsMovieScreen> {
         body: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
-          
             SliverToBoxAdapter(
               child: BlocBuilder<DetailsCubit, DetailsState>(
                 bloc: _cubit,
