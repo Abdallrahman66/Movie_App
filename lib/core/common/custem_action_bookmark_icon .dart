@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:movie_app/core/dialogs/app_toastes.dart';
 import 'package:movie_app/core/utils/app_colors.dart';
+
+import '../dialogs/app_toasts.dart';
 
 class CustomActionBookmark extends StatefulWidget {
   const CustomActionBookmark({super.key, required this.id});

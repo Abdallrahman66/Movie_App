@@ -11,6 +11,11 @@ extension PopolureMovieMapper on PopolureMovieDto {
                   id: e.id ?? 0,
                   posterPath:
                       "https://image.tmdb.org/t/p/w500${e.posterPath ?? ""}",
+                  title: e.title ?? "",
+                  voteAverage: e.voteAverage ?? 0.0,
+                  voteCount: e.voteCount ?? 0,
+                  releaseDate: e.releaseDate ?? "",
+                  overview: e.overview ?? "",
                 ),
               )
               .toList() ??

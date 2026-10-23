@@ -5,15 +5,18 @@ extension ReleasesMovieMapper on ReleasesMovieDto {
   HomeMovieEntity toEntity() {
     return HomeMovieEntity(
       results:
-          results
-              ?.map(
-                (e) => MovieItemEntity(
-                  id: e.id ?? 0,
-                  posterPath:
-                      "https://image.tmdb.org/t/p/w500${e.posterPath ?? ""}",
-                ),
-              )
-              .toList() ??
+          results?.map((e) {
+            return MovieItemEntity(
+              id: e.id ?? 0,
+              posterPath:
+                  'https://image.tmdb.org/t/p/w500${e.posterPath ?? ''}',
+              title: e.title ?? '',
+              voteAverage: e.voteAverage ?? 0.0,
+              voteCount: e.voteCount ?? 0,
+              releaseDate: e.releaseDate ?? '',
+              overview: e.overview ?? '',
+            );
+          }).toList() ??
           [],
     );
   }

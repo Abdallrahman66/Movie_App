@@ -21,8 +21,6 @@ class RecommendedMovieDto {
     totalPages = json['total_pages'];
     totalResults = json['total_results'];
   }
-
-
 }
 
 class ResultsRecommendedDto {
@@ -62,7 +60,7 @@ class ResultsRecommendedDto {
   ResultsRecommendedDto.fromJson(Map<String, dynamic> json) {
     adult = json['adult'];
     backdropPath = json['backdrop_path'];
-    genreIds = json['genre_ids'].cast<int>();
+    genreIds = (json['genre_ids'] as List<dynamic>?)?.whereType<int>().toList();
     id = json['id'];
     title = json['title'];
     originalLanguage = json['original_language'];
@@ -76,5 +74,4 @@ class ResultsRecommendedDto {
     voteAverage = json['vote_average'];
     voteCount = json['vote_count'];
   }
-
 }

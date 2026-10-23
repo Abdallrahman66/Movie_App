@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+
 import 'package:movie_app/core/widgets/cache_networkImage_widget.dart';
+import 'package:movie_app/feature/home/domain/entity/home_movie_entity.dart';
 
 class RecommendedMovieCarousel extends StatefulWidget {
   const RecommendedMovieCarousel({
@@ -8,15 +10,16 @@ class RecommendedMovieCarousel extends StatefulWidget {
     required this.onMovieTap,
   });
 
-  final List<dynamic> movies;
-  final ValueChanged<dynamic> onMovieTap;
+  final List<MovieItemEntity> movies;
+  final ValueChanged<MovieItemEntity> onMovieTap;
 
   @override
   State<RecommendedMovieCarousel> createState() =>
       _RecommendedMovieCarouselState();
 }
 
-class _RecommendedMovieCarouselState extends State<RecommendedMovieCarousel> {
+class _RecommendedMovieCarouselState
+    extends State<RecommendedMovieCarousel> {
   late final PageController _pageController;
 
   static const double _viewportFraction = 0.72;
@@ -26,7 +29,9 @@ class _RecommendedMovieCarouselState extends State<RecommendedMovieCarousel> {
   void initState() {
     super.initState();
 
-    _pageController = PageController(viewportFraction: _viewportFraction);
+    _pageController = PageController(
+      viewportFraction: _viewportFraction,
+    );
   }
 
   @override
@@ -57,20 +62,16 @@ class _RecommendedMovieCarouselState extends State<RecommendedMovieCarousel> {
             builder: (context, child) {
               final currentPage = _pageController.hasClients
                   ? _pageController.page ??
-                        _pageController.initialPage.toDouble()
+                      _pageController.initialPage.toDouble()
                   : _pageController.initialPage.toDouble();
 
               final difference = index - currentPage;
               final distance = difference.abs().clamp(0.0, 1.0);
 
-              // Keep side posters close to the active poster.
               final scale = 1.0 - (distance * 0.15);
-
-              // Slight vertical offset for the side posters.
               final verticalOffset = distance * 12;
-
-              // Subtle 3D rotation.
-              final rotation = (difference * 0.08).clamp(-0.10, 0.10);
+              final rotation =
+                  (difference * 0.08).clamp(-0.10, 0.10);
 
               return Transform.translate(
                 offset: Offset(0, verticalOffset),
@@ -96,12 +97,18 @@ class _RecommendedMovieCarouselState extends State<RecommendedMovieCarousel> {
     );
   }
 
-  Widget _buildMoviePoster(dynamic movie) {
+  Widget _buildMoviePoster(MovieItemEntity movie) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 12),
+      margin: const EdgeInsets.symmetric(
+        horizontal: 2,
+        vertical: 12,
+      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: const Color(0xFF49423E), width: 1.5),
+        border: Border.all(
+          color: const Color(0xFF49423E),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.45),
@@ -116,13 +123,14 @@ class _RecommendedMovieCarouselState extends State<RecommendedMovieCarousel> {
         child: Stack(
           fit: StackFit.expand,
           children: [
+            // Movie poster.
             CacheNetworkImage(
               imageUrl: movie.posterPath,
               fit: BoxFit.cover,
               borderRadius: BorderRadius.circular(20),
             ),
 
-            // Dark cinematic gradient.
+            // Gradient for better text visibility.
             IgnorePointer(
               child: DecoratedBox(
                 decoration: BoxDecoration(
@@ -130,18 +138,145 @@ class _RecommendedMovieCarouselState extends State<RecommendedMovieCarousel> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
+                      Colors.black.withOpacity(0.40),
                       Colors.transparent,
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.30),
+                      Colors.black.withOpacity(0.15),
+                      Colors.black.withOpacity(0.92),
                     ],
-                    stops: const [0.0, 0.55, 1.0],
+                    stops: const [
+                      0.0,
+                      0.30,
+                      0.58,
+                      1.0,
+                    ],
                   ),
                 ),
               ),
+            ),
+
+            // Movie rating.
+            Positioned(
+              top: 12,
+              left: 12,
+              child: _buildRatingBadge(movie.voteAverage),
+            ),
+
+            // Movie title and release year.
+            Positioned(
+              left: 12,
+              right: 12,
+              bottom: 14,
+              child: _buildMovieInformation(movie),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildRatingBadge(double rating) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 9,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.78),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.18),
+          width: 0.8,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.star_rounded,
+            color: Color(0xFFFFC857),
+            size: 15,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            rating.toStringAsFixed(1),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMovieInformation(MovieItemEntity movie) {
+    final title = movie.title.trim();
+    final releaseYear = _extractReleaseYear(movie.releaseDate);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (title.isNotEmpty)
+          Text(
+            title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 17,
+              height: 1.2,
+              fontWeight: FontWeight.w800,
+              shadows: [
+                Shadow(
+                  color: Colors.black54,
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ],
+            ),
+          ),
+
+        if (releaseYear != null) ...[
+          const SizedBox(height: 5),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.calendar_month_rounded,
+                color: Color(0xFFE0D6CF),
+                size: 13,
+              ),
+              const SizedBox(width: 5),
+              Text(
+                releaseYear,
+                style: const TextStyle(
+                  color: Color(0xFFE0D6CF),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  String? _extractReleaseYear(String releaseDate) {
+    final normalizedDate = releaseDate.trim();
+
+    if (normalizedDate.length < 4) {
+      return null;
+    }
+
+    final year = normalizedDate.substring(0, 4);
+
+    if (int.tryParse(year) == null) {
+      return null;
+    }
+
+    return year;
   }
 }

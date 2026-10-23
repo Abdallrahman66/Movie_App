@@ -1,208 +1,128 @@
 import 'package:movie_app/feature/details/domain/entities/details_entity.dart';
 
-class DetailsDto {
-  DetailsDto({
-    this.adult,
-    this.backdropPath,
-    this.belongsToCollection,
-    this.budget,
-    this.genres,
-    this.homepage,
-    this.id,
-    this.imdbId,
-    this.originCountry,
-    this.originalLanguage,
-    this.originalTitle,
-    this.overview,
-    this.popularity,
-    this.posterPath,
-    this.productionCompanies,
-    this.productionCountries,
-    this.releaseDate,
-    this.revenue,
-    this.runtime,
-    this.softcore,
-    this.spokenLanguages,
-    this.status,
-    this.tagline,
-    this.title,
-    this.video,
-    this.voteAverage,
-    this.voteCount,
-  });
+const _tmdbImageBase = 'https://image.tmdb.org/t/p/w500';
 
-  bool? adult;
+class DetailsDto {
+  DetailsDto.fromJson(Map<String, dynamic> json) {
+    backdropPath = json['backdrop_path'] as String?;
+    posterPath = json['poster_path'] as String?;
+    releaseDate = json['release_date'] as String?;
+    runtime = (json['runtime'] as num?)?.toInt();
+    tagline = json['tagline'] as String?;
+    title = json['title'] as String?;
+    overview = json['overview'] as String?;
+    voteAverage = (json['vote_average'] as num?)?.toDouble() ?? 0;
+
+    final rawGenres = json['genres'];
+
+    if (rawGenres is List) {
+      genres = rawGenres
+          .whereType<Map>()
+          .map((item) => item['name'])
+          .whereType<String>()
+          .where((name) => name.trim().isNotEmpty)
+          .toList(growable: false);
+    }
+
+    final rawCredits = json['credits'];
+
+    if (rawCredits is Map) {
+      final rawCast = rawCredits['cast'];
+
+      if (rawCast is List) {
+        cast = rawCast
+            .whereType<Map>()
+            .map(
+              (item) => MovieCreditEntity(
+                id: (item['id'] as num?)?.toInt() ?? 0,
+                name: (item['name'] as String?)?.trim().isNotEmpty == true
+                    ? item['name'] as String
+                    : 'Unknown',
+                profileImage: _image(item['profile_path'] as String?),
+                role: (item['character'] as String?) ?? '',
+              ),
+            )
+            .where((item) => item.id > 0)
+            .take(12)
+            .toList(growable: false);
+      }
+
+      final rawCrew = rawCredits['crew'];
+
+      if (rawCrew is List) {
+        crew = rawCrew
+            .whereType<Map>()
+            .map(
+              (item) => MovieCreditEntity(
+                id: (item['id'] as num?)?.toInt() ?? 0,
+                name: (item['name'] as String?)?.trim().isNotEmpty == true
+                    ? item['name'] as String
+                    : 'Unknown',
+                profileImage: _image(item['profile_path'] as String?),
+                role:
+                    (item['job'] as String?) ??
+                    (item['department'] as String?) ??
+                    '',
+              ),
+            )
+            .where((item) => item.id > 0)
+            .take(12)
+            .toList(growable: false);
+      }
+    }
+  }
+
   String? backdropPath;
-  BelongsToCollection? belongsToCollection;
-  int? budget;
-  List<Genres>? genres;
-  String? homepage;
-  int? id;
-  String? imdbId;
-  List<String>? originCountry;
-  String? originalLanguage;
-  String? originalTitle;
-  String? overview;
-  double? popularity;
   String? posterPath;
-  List<ProductionCompanies>? productionCompanies;
-  List<ProductionCountries>? productionCountries;
   String? releaseDate;
-  int? revenue;
   int? runtime;
-  bool? softcore;
-  List<SpokenLanguages>? spokenLanguages;
-  String? status;
   String? tagline;
   String? title;
-  bool? video;
-  double? voteAverage;
-  int? voteCount;
+  String? overview;
+
+  double voteAverage = 0;
+
+  List<String> genres = const [];
+
+  List<MovieCreditEntity> cast = const [];
+
+  List<MovieCreditEntity> crew = const [];
 
   DetailsEntity toEntity() {
     return DetailsEntity(
-      coverImage: !(backdropPath == null)
-          ? "https://image.tmdb.org/t/p/w500$backdropPath"
-          : 'https://img.pikbest.com/backgrounds/20190729/white-wrinkled-paper-background-image_2769903.jpg!w700wp',
-
-      image: !(posterPath == null)
-          ? "https://image.tmdb.org/t/p/w500$posterPath"
-          : "https://img.pikbest.com/backgrounds/20190729/white-wrinkled-paper-background-image_2769903.jpg!w700wp",
-
-      publishDate: releaseDate?.split('-').first ?? "0000",
-
-      category: (genres != null && genres!.isNotEmpty)
-          ? genres![0].name ?? 'Uncategorized'
-          : 'Uncategorized',
-
-      timeOfMovie: "${runtime ?? 0} Minutes",
-
-      title: title ?? 'No Title',
-
-      description: overview ?? 'No Description',
-      voteAverage: voteAverage ?? 0,
+      coverImage: _image(backdropPath),
+      image: _image(posterPath),
+      publishDate: _year(releaseDate),
+      categories: genres,
+      timeOfMovie: runtime != null && runtime! > 0
+          ? '$runtime Minutes'
+          : 'Runtime N/A',
+      title: title?.trim().isNotEmpty == true
+          ? title!.trim()
+          : 'Untitled movie',
+      tagline: tagline?.trim() ?? '',
+      description: overview?.trim().isNotEmpty == true
+          ? overview!.trim()
+          : 'No synopsis is available for this movie yet.',
+      voteAverage: voteAverage,
+      cast: cast,
+      crew: crew,
     );
   }
 
-  DetailsDto.fromJson(Map<String, dynamic> json) {
-    adult = json['adult'];
-    backdropPath = json['backdrop_path'];
-    belongsToCollection = json['belongs_to_collection'] != null
-        ? BelongsToCollection.fromJson(json['belongs_to_collection'])
-        : null;
-    budget = json['budget'];
-    if (json['genres'] != null) {
-      genres = <Genres>[];
-      json['genres'].forEach((v) {
-        genres!.add(Genres.fromJson(v));
-      });
+  static String _image(String? path) {
+    if (path == null || path.isEmpty) {
+      return '';
     }
-    homepage = json['homepage'];
-    id = json['id'];
-    imdbId = json['imdb_id'];
-    originCountry = json['origin_country'].cast<String>();
-    originalLanguage = json['original_language'];
-    originalTitle = json['original_title'];
-    overview = json['overview'];
-    popularity = json['popularity'];
-    posterPath = json['poster_path'];
-    if (json['production_companies'] != null) {
-      productionCompanies = <ProductionCompanies>[];
-      json['production_companies'].forEach((v) {
-        productionCompanies!.add(ProductionCompanies.fromJson(v));
-      });
+
+    return '$_tmdbImageBase$path';
+  }
+
+  static String _year(String? date) {
+    if (date != null && date.length >= 4) {
+      return date.substring(0, 4);
     }
-    if (json['production_countries'] != null) {
-      productionCountries = <ProductionCountries>[];
-      json['production_countries'].forEach((v) {
-        productionCountries!.add(ProductionCountries.fromJson(v));
-      });
-    }
-    releaseDate = json['release_date'];
-    revenue = json['revenue'];
-    runtime = json['runtime'];
-    softcore = json['softcore'];
-    if (json['spoken_languages'] != null) {
-      spokenLanguages = <SpokenLanguages>[];
-      json['spoken_languages'].forEach((v) {
-        spokenLanguages!.add(SpokenLanguages.fromJson(v));
-      });
-    }
-    status = json['status'];
-    tagline = json['tagline'];
-    title = json['title'];
-    video = json['video'];
-    voteAverage = json['vote_average'];
-    voteCount = json['vote_count'];
-  }
-}
 
-class BelongsToCollection {
-  int? id;
-  String? name;
-  String? posterPath;
-  String? backdropPath;
-
-  BelongsToCollection({this.id, this.name, this.posterPath, this.backdropPath});
-
-  BelongsToCollection.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    posterPath = json['poster_path'];
-    backdropPath = json['backdrop_path'];
-  }
-}
-
-class Genres {
-  int? id;
-  String? name;
-
-  Genres({this.id, this.name});
-
-  Genres.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-  }
-}
-
-class ProductionCompanies {
-  int? id;
-  String? logoPath;
-  String? name;
-  String? originCountry;
-
-  ProductionCompanies({this.id, this.logoPath, this.name, this.originCountry});
-
-  ProductionCompanies.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    logoPath = json['logo_path'];
-    name = json['name'];
-    originCountry = json['origin_country'];
-  }
-}
-
-class ProductionCountries {
-  String? iso31661;
-  String? name;
-
-  ProductionCountries({this.iso31661, this.name});
-
-  ProductionCountries.fromJson(Map<String, dynamic> json) {
-    iso31661 = json['iso_3166_1'];
-    name = json['name'];
-  }
-}
-
-class SpokenLanguages {
-  String? englishName;
-  String? iso6391;
-  String? name;
-
-  SpokenLanguages({this.englishName, this.iso6391, this.name});
-
-  SpokenLanguages.fromJson(Map<String, dynamic> json) {
-    englishName = json['english_name'];
-    iso6391 = json['iso_639_1'];
-    name = json['name'];
+    return 'Year N/A';
   }
 }
