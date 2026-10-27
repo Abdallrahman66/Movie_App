@@ -1,22 +1,23 @@
+
 part of 'search_cubit.dart';
 
 abstract class SearchState {}
 
- class SearchInitial extends SearchState {}
+class SearchInitial extends SearchState {}
 
- class SearchLoading extends SearchState {}
+class SearchLoading extends SearchState {}
 
- class SearchEmpty extends SearchState {}
+class SearchEmpty extends SearchState {}
 
- class SearchSuccess extends SearchState {
-  final List<MovieEntity> movies;
+class SearchSuccess extends SearchState {
   SearchSuccess(this.movies, this.query);
-  final String query;
 
+  final List<MovieEntity> movies;
+  final String query;
 }
 
- class SearchError extends SearchState {
-  final String error;
-
+class SearchError extends SearchState {
   SearchError(this.error);
+
+  final String error;
 }

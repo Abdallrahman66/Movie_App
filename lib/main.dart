@@ -6,7 +6,7 @@ import 'package:movie_app/feature/home/presentation/view/home_screen.dart';
 import 'package:movie_app/feature/onboarding/presentation/onboarding_screen.dart';
 import 'package:movie_app/feature/onboarding/presentation/splash_screen.dart';
 import 'package:movie_app/feature/search/presentation/view/screen/Search_screen.dart';
-import 'package:movie_app/feature/search/presentation/view/screen/invalid_search_screen.dart';
+
 import 'package:movie_app/feature/watch_list/presentation/view/watch_list.dart';
 
 void main() async {
@@ -38,11 +38,8 @@ class MyApp extends StatelessWidget {
 
         SearchScreen.routeName: (context) => const SearchScreen(),
 
-        InvalidSearchScreen.routeName: (context) => const InvalidSearchScreen(),
-
         WatchList.routeName: (context) => const WatchList(),
       },
     );
   }
 }
-

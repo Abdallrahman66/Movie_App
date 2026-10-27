@@ -1,203 +1,220 @@
 import 'package:flutter/material.dart';
 
+import 'package:movie_app/core/common/custem_action_bookmark_icon%20.dart';
 import 'package:movie_app/core/utils/app_colors.dart';
-import 'package:movie_app/core/utils/assets_icons.dart';
 import 'package:movie_app/core/widgets/cache_networkImage_widget.dart';
 import 'package:movie_app/feature/details/presentation/view/screens/details_movie_screen.dart';
-
-
-
 import 'package:movie_app/feature/search/domain/entities/movie_entity.dart';
 
 class MovieItem extends StatelessWidget {
-  final MovieEntity movie;
-
-  final String query;
-
   const MovieItem({super.key, required this.movie, required this.query});
+
+  final MovieEntity movie;
+  final String query;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-       Navigator.push(
-          context,
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final posterWidth = (screenWidth * 0.25).clamp(76.0, 100.0);
+    final posterHeight = posterWidth * 1.4;
 
-          MaterialPageRoute(
-            builder: (context) {
-              return DetailsMovieScreen(id: movie.id);
-            },
-          ),
-        );
-      },
-
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 14),
-
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-
-          children: [
-            CacheNetworkImage(
-              imageUrl: movie.image,
-
-              width: 100,
-
-              height: 140,
-
-              borderRadius: BorderRadius.circular(16),
-            ),
-
-            SizedBox(width: 14),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-                  RichText(
-                    maxLines: 1,
-
-                    overflow: TextOverflow.ellipsis,
-
-                    text: TextSpan(
-                      children: highlightText(movie.title, query),
-
-                      style: TextStyle(
-                        fontSize: 24,
-
-                        fontWeight: FontWeight.w500,
-
-                        color: AppColor.primaryTextColor,
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 14),
-
-                  Row(
-                    children: [
-                      Icon(Icons.star_border, color: Colors.orange, size: 20),
-
-                      SizedBox(width: 6),
-
-                      Text(
-                        movie.voteAverage.toStringAsFixed(1),
-
-                        style: TextStyle(
-                          color: Colors.orange,
-
-                          fontSize: 18,
-
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 10),
-
-                  Row(
-                    children: [
-                      Image.asset(AssetsIcon.type_movie_icon),
-
-                      SizedBox(width: 8),
-
-                      Text(
-                        movie.genre,
-
-                        style: TextStyle(
-                          fontSize: 18,
-
-                          fontWeight: FontWeight.w400,
-
-                          color: Color(0xffFFFFFF),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 10),
-
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today_outlined,
-
-                        color: Colors.white70,
-
-                        size: 18,
-                      ),
-
-                      SizedBox(width: 8),
-
-                      Text(
-                        movie.publishDate,
-
-                        style: TextStyle(color: Colors.white70, fontSize: 18),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 10),
-
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.access_time_outlined,
-
-                        color: Colors.white70,
-
-                        size: 18,
-                      ),
-
-                      SizedBox(width: 8),
-
-                      Text(
-                        "139 minutes",
-
-                        style: TextStyle(color: Colors.white70, fontSize: 18),
-                      ),
-                    ],
-                  ),
-                ],
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1B1C21).withOpacity(0.88),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: AppColor.primaryDarkColor.withOpacity(0.16),
+          width: 0.8,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => DetailsMovieScreen(id: movie.id),
               ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(11),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CacheNetworkImage(
+                  imageUrl: movie.image,
+                  width: posterWidth,
+                  height: posterHeight,
+                  borderRadius: BorderRadius.circular(9),
+                ),
+
+                const SizedBox(width: 12),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 2),
+
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: RichText(
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              text: TextSpan(
+                                style: const TextStyle(
+                                  color: AppColor.primaryTextColor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.3,
+                                ),
+                                children: _highlightText(movie.title, query),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+
+                          CustomActionBookmark(
+                            key: ValueKey('bookmark_${movie.id}'),
+                            id: movie.id,
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 11),
+
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.star_rounded,
+                            color: AppColor.primaryDarkColor,
+                            size: 17,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            movie.voteAverage.toStringAsFixed(1),
+                            style: const TextStyle(
+                              color: AppColor.primaryDarkColor,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          const Text(
+                            '•',
+                            style: TextStyle(
+                              color: AppColor.secondaryTextLightColor,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              movie.genre,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: AppColor.secondaryTextLightColor,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 9),
+
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today_outlined,
+                            size: 13,
+                            color: AppColor.secondaryTextLightColor,
+                          ),
+                          const SizedBox(width: 6),
+                          Flexible(
+                            child: Text(
+                              movie.publishDate,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: AppColor.secondaryTextLightColor,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      if (movie.overview.isNotEmpty &&
+                          movie.overview != 'No Description') ...[
+                        const SizedBox(height: 9),
+                        Text(
+                          movie.overview,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Color(0xFF92939B),
+                            fontSize: 10,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  List<TextSpan> highlightText(String text, String query) {
-    if (query.isEmpty) {
+  List<TextSpan> _highlightText(String text, String searchQuery) {
+    if (searchQuery.trim().isEmpty) {
       return [TextSpan(text: text)];
     }
 
-    final matches = RegExp(query, caseSensitive: false);
+    final normalizedText = text.toLowerCase();
+    final normalizedQuery = searchQuery.trim().toLowerCase();
 
     final spans = <TextSpan>[];
+    var currentIndex = 0;
 
-    int start = 0;
+    while (currentIndex < text.length) {
+      final matchIndex = normalizedText.indexOf(normalizedQuery, currentIndex);
 
-    for (final match in matches.allMatches(text)) {
-      if (match.start > start) {
-        spans.add(TextSpan(text: text.substring(start, match.start)));
+      if (matchIndex == -1) {
+        spans.add(TextSpan(text: text.substring(currentIndex)));
+        break;
       }
+
+      if (matchIndex > currentIndex) {
+        spans.add(TextSpan(text: text.substring(currentIndex, matchIndex)));
+      }
+
+      final matchEnd = matchIndex + normalizedQuery.length;
 
       spans.add(
         TextSpan(
-          text: text.substring(match.start, match.end),
-
-          style: TextStyle(color: Colors.yellow, fontWeight: FontWeight.bold),
+          text: text.substring(matchIndex, matchEnd),
+          style: const TextStyle(
+            color: AppColor.primaryDarkColor,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       );
 
-      start = match.end;
-    }
-
-    if (start < text.length) {
-      spans.add(TextSpan(text: text.substring(start)));
+      currentIndex = matchEnd;
     }
 
     return spans;

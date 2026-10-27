@@ -1,41 +1,78 @@
+
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
+import 'package:movie_app/core/utils/app_colors.dart';
+
 class CustomSearchBar extends StatelessWidget {
-  CustomSearchBar({
+  const CustomSearchBar({
     super.key,
-    this.hintText = "Search movie...",
     required this.controller,
     required this.onSubmitted,
     this.onChanged,
+    this.onClear,
+    this.hintText = 'Search movie...',
   });
+
   final TextEditingController controller;
-  void Function(String)? onSubmitted;
+  final ValueChanged<String>? onSubmitted;
+  final ValueChanged<String>? onChanged;
+  final VoidCallback? onClear;
   final String hintText;
-  void Function(String)? onChanged;
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: TextField(
-        controller: controller,
-        onChanged: onChanged,
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: const TextStyle(color: Colors.grey),
-          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+    final hasText = controller.text.isNotEmpty;
 
-          filled: true,
-          fillColor: const Color(0xFF2A2A2A),
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 14,
-            horizontal: 16,
+    return TextField(
+      controller: controller,
+      onChanged: onChanged,
+      onSubmitted: onSubmitted,
+      textInputAction: TextInputAction.search,
+      style: const TextStyle(
+        color: AppColor.primaryTextColor,
+        fontSize: 14,
+      ),
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: const TextStyle(
+          color: AppColor.secondaryTextLightColor,
+          fontSize: 13,
+        ),
+        prefixIcon: const Icon(
+          Icons.search_rounded,
+          color: AppColor.secondaryTextLightColor,
+          size: 19,
+        ),
+        suffixIcon: hasText
+            ? IconButton(
+                tooltip: 'Clear search',
+                onPressed: onClear,
+                icon: const Icon(
+                  Icons.close_rounded,
+                  size: 17,
+                  color: AppColor.secondaryTextLightColor,
+                ),
+              )
+            : null,
+        filled: true,
+        fillColor: const Color(0xFF191A20),
+        isDense: true,
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 14,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(
+            color: Color(0xFF292B30),
+            width: 0.7,
           ),
-
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30),
-            borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(
+            color: AppColor.primaryDarkColor,
+            width: 0.9,
           ),
         ),
       ),
