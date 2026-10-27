@@ -15,4 +15,13 @@ abstract class AppColor {
   static const Color indicatorInactiveColor = Color(0xff36373C);
 
   static const Color overlayColor = Color(0x99000000);
+
+  static const Color watchListBackground = Color(0xFF101114);
+  static const Color watchListCard = Color(0xFF1D1D24);
+  static const Color watchListBorder = Color(0xFF292932);
+  static const Color watchListGold = Color(0xFFC9A96E);
+  static const Color watchListTitle = Color(0xFFF5E6CF);
+  static const Color watchListMuted = Color(0xFFAAA7A4);
+  static const Color watchListRemove = Color(0xFFFFBFC8);
+  static const Color watchListRemoveText = Color(0xFF9F4555);
 }
