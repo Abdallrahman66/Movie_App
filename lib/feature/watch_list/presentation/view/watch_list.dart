@@ -36,15 +36,14 @@ class _WatchListState extends State<WatchList> {
     _watchListCubit.loadMovies();
   }
 
-  // The Cubit is shared through GetIt.
-  // Do not close the shared instance from this screen.
   @override
   Widget build(BuildContext context) {
     return BlocProvider<WatchListCubit>.value(
       value: _watchListCubit,
       child: Scaffold(
         backgroundColor: AppColor.backgroundColor,
-        appBar: CustomAppBar(title: 'Watch List'),
+        appBar: CustomAppBar(title: 'Watch List '),
+
         body: BlocBuilder<WatchListCubit, WatchListState>(
           builder: (context, state) {
             if (state is WatchListInitial || state is WatchListLoading) {
@@ -139,36 +138,16 @@ class _WatchListState extends State<WatchList> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const SizedBox(height: 8),
-                  Container(
-                    width: 250,
-                    height: 250,
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: const Color(0xFF191F21),
-                      border: Border.all(
-                        color: _gold.withValues(alpha: 0.08),
-                        width: 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
-                          blurRadius: 35,
-                          spreadRadius: 8,
-                        ),
-                      ],
-                    ),
-                    child: Image.asset(
-                      'assets/images/watchlist_empty.png',
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) {
-                        return const Icon(
-                          Icons.movie_creation_outlined,
-                          size: 100,
-                          color: _gold,
-                        );
-                      },
-                    ),
+                  Image.asset(
+                    'assets/images/watchlist_empty.png',
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) {
+                      return const Icon(
+                        Icons.movie_creation_outlined,
+                        size: 100,
+                        color: _gold,
+                      );
+                    },
                   ),
                   const SizedBox(height: 34),
                   Row(

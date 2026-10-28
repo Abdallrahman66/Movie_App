@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:movie_app/core/utils/app_colors.dart';
 import 'package:movie_app/core/utils/assets_image.dart';
@@ -17,22 +18,20 @@ class InvalidSearchScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(
-                AssetsImage.NoResultSearch,
-                height: 140,
-                fit: BoxFit.contain,
-              ),
+              Image.asset(AssetsImage.NoResultSearch, fit: BoxFit.contain),
               const SizedBox(height: 24),
-              const Text(
-                'We Are Sorry, We Can Not\nFind The Movie',
+
+              Text(
+                'We Are Sorry, We Can Not Find The Movie',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 17,
+                style: GoogleFonts.cinzel(
+                  fontSize: 29,
+                  height: 1.3,
                   fontWeight: FontWeight.w600,
-                  color: AppColor.primaryTextColor,
-                  height: 1.4,
+                  color: const Color(0xFFF0E9E0),
                 ),
               ),
+
               const SizedBox(height: 10),
               const Text(
                 'Find your movie by typing its title.',
