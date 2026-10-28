@@ -1,9 +1,9 @@
-import 'package:hive_ce/hive_ce.dart';
+import 'package:hive_ce/hive.dart';
 
 import '../models/watch_list_movie_model.dart';
 
 class WatchListLocalDataSource {
-  WatchListLocalDataSource(this._box);
+  const WatchListLocalDataSource(this._box);
 
   final Box<dynamic> _box;
 
@@ -11,22 +11,29 @@ class WatchListLocalDataSource {
     final movies = <WatchListMovieModel>[];
 
     for (final value in _box.values) {
-      if (value is Map) {
+      if (value is! Map) continue;
+
+      try {
         movies.add(WatchListMovieModel.fromMap(value));
-      }
+      } on TypeError {
+      } on ArgumentError {}
     }
 
-    return movies;
+    return List.unmodifiable(movies);
   }
 
   Future<WatchListMovieModel?> getMovie(int movieId) async {
     final value = _box.get(movieId);
 
-    if (value is! Map) {
+    if (value is! Map) return null;
+
+    try {
+      return WatchListMovieModel.fromMap(value);
+    } on TypeError {
+      return null;
+    } on ArgumentError {
       return null;
     }
-
-    return WatchListMovieModel.fromMap(value);
   }
 
   Future<bool> containsMovie(int movieId) async {

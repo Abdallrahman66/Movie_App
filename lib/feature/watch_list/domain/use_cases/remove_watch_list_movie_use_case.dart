@@ -1,7 +1,7 @@
 import '../repositories/watch_list_repository.dart';
 
 class RemoveWatchListMovieUseCase {
-  RemoveWatchListMovieUseCase(this._repository);
+  const RemoveWatchListMovieUseCase(this._repository);
 
   final WatchListRepository _repository;
 

@@ -1,19 +1,20 @@
+import '../../domain/entities/watch_list_movie_entity.dart';
 import '../../domain/repositories/watch_list_repository.dart';
 import '../data_sources/watch_list_local_data_source.dart';
 import '../models/watch_list_movie_model.dart';
 
 class WatchListRepositoryImpl implements WatchListRepository {
-  WatchListRepositoryImpl(this._localDataSource);
+  const WatchListRepositoryImpl(this._localDataSource);
 
   final WatchListLocalDataSource _localDataSource;
 
   @override
-  Future<List<WatchListMovieModel>> getMovies() {
+  Future<List<WatchListMovieEntity>> getMovies() async {
     return _localDataSource.getMovies();
   }
 
   @override
-  Future<WatchListMovieModel?> getMovie(int movieId) {
+  Future<WatchListMovieEntity?> getMovie(int movieId) async {
     return _localDataSource.getMovie(movieId);
   }
 
@@ -23,8 +24,8 @@ class WatchListRepositoryImpl implements WatchListRepository {
   }
 
   @override
-  Future<void> saveMovie(WatchListMovieModel movie) {
-    return _localDataSource.saveMovie(movie);
+  Future<void> saveMovie(WatchListMovieEntity movie) {
+    return _localDataSource.saveMovie(WatchListMovieModel.fromEntity(movie));
   }
 
   @override

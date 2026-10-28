@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:movie_app/core/utils/app_colors.dart';
 import 'package:movie_app/core/widgets/cache_networkImage_widget.dart';
 
-import '../../../data/models/watch_list_movie_model.dart';
+import '../../../domain/entities/watch_list_movie_entity.dart';
 
 class WatchListMovieCard extends StatelessWidget {
   const WatchListMovieCard({
@@ -13,7 +14,7 @@ class WatchListMovieCard extends StatelessWidget {
     required this.onTap,
   });
 
-  final WatchListMovieModel movie;
+  final WatchListMovieEntity movie;
   final VoidCallback onRemove;
   final VoidCallback onTap;
 
@@ -47,10 +48,9 @@ class WatchListMovieCard extends StatelessWidget {
                   ),
                 ),
               ),
-
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(7, 15, 0, 12),
+                  padding: const EdgeInsets.fromLTRB(7, 12, 8, 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -60,25 +60,24 @@ class WatchListMovieCard extends StatelessWidget {
                           Expanded(
                             child: Text(
                               movie.title,
-                              maxLines: 1,
+                              maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: GoogleFonts.manrope(
                                 color: AppColor.watchListTitle,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w700,
                                 height: 1.25,
                               ),
                             ),
                           ),
                           const SizedBox(width: 4),
-
                           IconButton(
                             onPressed: onRemove,
                             tooltip: 'Remove from Watch List',
                             padding: EdgeInsets.zero,
                             constraints: const BoxConstraints(
-                              minWidth: 25,
-                              minHeight: 25,
+                              minWidth: 28,
+                              minHeight: 28,
                             ),
                             icon: const Icon(
                               Icons.bookmark_rounded,
@@ -88,9 +87,7 @@ class WatchListMovieCard extends StatelessWidget {
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 13),
-
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           const Icon(
@@ -100,55 +97,48 @@ class WatchListMovieCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            movie.voteAverage.toStringAsFixed(2),
-                            style: const TextStyle(
+                            movie.voteAverage.toStringAsFixed(1),
+                            style: GoogleFonts.manrope(
                               color: Colors.white,
                               fontSize: 12,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 9),
-
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              _formatReleaseDate(movie.releaseDate),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                color: AppColor.watchListMuted,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        ],
+                      const SizedBox(height: 7),
+                      Text(
+                        _formatReleaseDate(movie.releaseDate),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.manrope(
+                          color: AppColor.watchListMuted,
+                          fontSize: 12,
+                        ),
                       ),
-
                       const Spacer(),
-
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.swipe_left_rounded,
                             color: AppColor.watchListMuted.withValues(
                               alpha: 0.8,
                             ),
-                            size: 15,
+                            size: 14,
                           ),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Swipe left to remove',
-                            style: TextStyle(
-                              color: AppColor.watchListMuted.withValues(
-                                alpha: 0.8,
+                          const SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              'Swipe left to remove',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.manrope(
+                                color: AppColor.watchListMuted.withValues(
+                                  alpha: 0.8,
+                                ),
+                                fontSize: 10,
+                                fontStyle: FontStyle.italic,
                               ),
-                              fontSize: 16,
-                              fontStyle: FontStyle.italic,
                             ),
                           ),
                         ],
@@ -166,9 +156,13 @@ class WatchListMovieCard extends StatelessWidget {
 }
 
 String _formatReleaseDate(String date) {
-  if (date.isEmpty) return 'Release date unavailable';
+  if (date.trim().isEmpty) {
+    return 'Release date unavailable';
+  }
 
-  if (date.length >= 4) return date.substring(0, 4);
+  if (date.length >= 4) {
+    return date.substring(0, 4);
+  }
 
   return date;
 }

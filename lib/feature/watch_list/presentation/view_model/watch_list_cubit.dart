@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../data/models/watch_list_movie_model.dart';
+import '../../domain/entities/watch_list_movie_entity.dart';
 import '../../domain/use_cases/get_watch_list_use_case.dart';
 import '../../domain/use_cases/remove_watch_list_movie_use_case.dart';
 import '../../domain/use_cases/toggle_watch_list_use_case.dart';
@@ -20,43 +20,73 @@ class WatchListCubit extends Cubit<WatchListState> {
   final ToggleWatchListUseCase _toggleWatchList;
   final RemoveWatchListMovieUseCase _removeWatchListMovie;
 
-  final Set<int> _pendingMovieIds = {};
+  final Set<int> _pendingMovieIds = <int>{};
 
-  List<WatchListMovieModel> _movies = [];
+  List<WatchListMovieEntity> _movies = <WatchListMovieEntity>[];
 
-  List<WatchListMovieModel> get movies => List.unmodifiable(_movies);
+  int _loadRequestId = 0;
+
+  List<WatchListMovieEntity> get movies => List.unmodifiable(_movies);
 
   Future<void> loadMovies() async {
-    emit(const WatchListLoading());
+    final requestId = ++_loadRequestId;
+
+    if (_movies.isEmpty) {
+      emit(const WatchListLoading());
+    }
 
     try {
-      _movies = await _getWatchList();
+      final loadedMovies = await _getWatchList();
 
-      if (!isClosed) {
-        emit(WatchListLoaded(List.unmodifiable(_movies)));
+      if (isClosed ||
+          requestId != _loadRequestId ||
+          _pendingMovieIds.isNotEmpty) {
+        return;
       }
-    } catch (error) {
-      if (!isClosed) {
-        emit(WatchListError('Unable to load your watch list.'));
+
+      _movies = List.unmodifiable(loadedMovies);
+
+      emit(WatchListLoaded(_movies));
+    } catch (_) {
+      if (isClosed || requestId != _loadRequestId) {
+        return;
+      }
+
+      if (_movies.isNotEmpty) {
+        emit(WatchListLoaded(_movies));
+      } else {
+        emit(const WatchListError('Unable to load your watch list.'));
       }
     }
   }
 
-  Future<bool> toggleMovie(WatchListMovieModel movie) async {
+  Future<bool> toggleMovie(WatchListMovieEntity movie) async {
     if (_pendingMovieIds.contains(movie.id)) {
       return _movies.any((item) => item.id == movie.id);
     }
 
     _pendingMovieIds.add(movie.id);
+    _loadRequestId++;
 
     try {
       final saved = await _toggleWatchList(movie);
 
-      await _refreshMovies();
+      if (isClosed) return saved;
+
+      if (saved) {
+        _movies = List.unmodifiable([
+          ..._movies.where((item) => item.id != movie.id),
+          movie,
+        ]);
+      } else {
+        _movies = List.unmodifiable(
+          _movies.where((item) => item.id != movie.id),
+        );
+      }
+
+      emit(WatchListLoaded(_movies));
 
       return saved;
-    } catch (_) {
-      rethrow;
     } finally {
       _pendingMovieIds.remove(movie.id);
     }
@@ -68,24 +98,24 @@ class WatchListCubit extends Cubit<WatchListState> {
     }
 
     _pendingMovieIds.add(movieId);
+    _loadRequestId++;
 
     try {
       await _removeWatchListMovie(movieId);
-      await _refreshMovies();
+
+      if (isClosed) return;
+
+      _movies = List.unmodifiable(
+        _movies.where((movie) => movie.id != movieId),
+      );
+
+      emit(WatchListLoaded(_movies));
     } finally {
       _pendingMovieIds.remove(movieId);
     }
   }
 
-  Future<bool> isSaved(int movieId) async {
+  bool isSaved(int movieId) {
     return _movies.any((movie) => movie.id == movieId);
-  }
-
-  Future<void> _refreshMovies() async {
-    _movies = await _getWatchList();
-
-    if (!isClosed) {
-      emit(WatchListLoaded(List.unmodifiable(_movies)));
-    }
   }
 }

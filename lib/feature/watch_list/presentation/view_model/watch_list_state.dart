@@ -1,4 +1,4 @@
-import '../../data/models/watch_list_movie_model.dart';
+import '../../domain/entities/watch_list_movie_entity.dart';
 
 sealed class WatchListState {
   const WatchListState();
@@ -13,9 +13,10 @@ final class WatchListLoading extends WatchListState {
 }
 
 final class WatchListLoaded extends WatchListState {
-  const WatchListLoaded(this.movies);
+  WatchListLoaded(List<WatchListMovieEntity> movies)
+    : movies = List.unmodifiable(movies);
 
-  final List<WatchListMovieModel> movies;
+  final List<WatchListMovieEntity> movies;
 }
 
 final class WatchListError extends WatchListState {
