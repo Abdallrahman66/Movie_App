@@ -192,48 +192,7 @@ Filmo uses local storage to maintain user preferences and saved movies.
 
 ---
 
-## 🚀 Getting Started
 
-### Requirements
-
-* Flutter SDK
-* Dart SDK
-* Android Studio or VS Code
-* TMDB API credentials
-
-### Installation
-
-**1. Clone the repository**
-
-```bash
-git clone YOUR_REPOSITORY_URL
-```
-
-**2. Navigate to the project directory**
-
-```bash
-cd YOUR_PROJECT_DIRECTORY
-```
-
-**3. Install dependencies**
-
-```bash
-flutter pub get
-```
-
-**4. Configure TMDB API credentials**
-
-Configure the TMDB API key using the project's environment configuration before running the application.
-
-Never commit API credentials to the repository.
-
-**5. Run the application**
-
-```bash
-flutter run
-```
-
----
 
 ## 🎥 Application Demo
 
