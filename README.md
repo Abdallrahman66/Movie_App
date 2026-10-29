@@ -2,147 +2,229 @@
 
 # 🎬 Filmo
 
-### Discover movies. Explore stories. Save what you love.
+### Your Next Movie Starts Here.
 
-A Flutter movie discovery app powered by the [TMDB API](https://developer.themoviedb.org/docs), built around movie browsing, detailed film information, search, and a locally stored watchlist.
+A Flutter-based movie discovery application that helps users explore movies, discover new releases, search for their favorite titles, and manage a personal watchlist.
 
-<br />
+<br/>
 
-[![Flutter](https://img.shields.io/badge/Flutter-Mobile%20App-02569B?logo=flutter\&logoColor=white)](https://flutter.dev/)
-[![Dart](https://img.shields.io/badge/Dart-Language-0175C2?logo=dart\&logoColor=white)](https://dart.dev/)
-[![State Management](https://img.shields.io/badge/State-Cubit%20%2F%20BLoC-764ABC)](https://pub.dev/packages/flutter_bloc)
-[![API](https://img.shields.io/badge/Data-TMDB%20API-01B4E4)](https://www.themoviedb.org/)
+![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter)
+![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?logo=dart)
+![Architecture](https://img.shields.io/badge/Architecture-Clean%20Architecture-8B6CEF)
+![State Management](https://img.shields.io/badge/State%20Management-Cubit-764ABC)
+![API](https://img.shields.io/badge/API-TMDB-01B4E4?logo=themoviedatabase)
 
-<br />
+<br/>
 
-**[▶ Watch the Filmo Demo](https://github.com/user-attachments/assets/7283ead6-492a-449c-9db4-437ed821ae94)**
+**[▶ Watch Application Demo](https://github.com/user-attachments/assets/7283ead6-492a-449c-9db4-437ed821ae94)**
 
 </div>
 
 ---
 
-## About
+## 📌 Overview
 
-Filmo is a movie discovery application developed with Flutter as an NTI graduation project. It brings movie discovery, search, detailed film information, and a personal watchlist into one dark-themed interface.
+Filmo is a movie discovery application developed using Flutter and powered by the TMDB API.
 
-The app retrieves movie data from TMDB and uses local storage to keep the watchlist available between app sessions. The codebase separates the main features into data, domain, and presentation responsibilities, with Cubit managing UI state.
+It provides an interactive experience for exploring popular and top-rated movies, discovering upcoming releases, searching for movies, and viewing detailed movie information.
 
-## Features
+Users can also build their own watchlist, save movies locally, and manage their saved collection.
 
-* **Home:** Browse top-rated, popular, and upcoming movies.
-* **Movie details:** View a film's overview, release information, runtime, genres, ratings, cast, and crew.
-* **Similar movies:** Explore related titles from the details screen.
-* **Search:** Search TMDB's movie catalogue, with loading, empty-result, and error states.
-* **Watchlist:** Save and remove movies, with data persisted locally using Hive CE.
-* **Onboarding:** Animated introduction with Skip/Continue controls and a saved completion state.
-* **Navigation:** Floating bottom navigation that animates out of view while scrolling.
-* **UI feedback:** Cached network images, shimmer loading, pull-to-refresh on Home, and empty/error states.
+The project was developed with a focus on maintainable code, separation of concerns, reusable components, and scalable application structure.
 
-> **Current scope:** The separate Releases tab is currently a “Coming Soon” screen. Upcoming movies are already displayed in the Home feed.
+---
 
-## Tech Stack
+## ✨ Key Features
 
-| Area              | Technologies                                                              |
-| ----------------- | ------------------------------------------------------------------------- |
-| App development   | Flutter, Dart                                                             |
-| State management  | Cubit / `flutter_bloc`                                                    |
-| Architecture & DI | Feature-first structure, Clean Architecture principles, GetIt, Injectable |
-| Networking        | HTTP, REST, TMDB API                                                      |
-| Local persistence | Hive CE, SharedPreferences                                                |
-| UI                | Material, Cached Network Image, Google Fonts, shimmer/loading animations  |
-| Feedback          | Toastification                                                            |
-| Developer tools   | Git, GitHub, Postman                                                      |
+| Feature                | Description                                                   |
+| ---------------------- | ------------------------------------------------------------- |
+| Animated Splash Screen | Smooth logo and application introduction animations.          |
+| Onboarding             | Interactive introduction with persistent completion state.    |
+| Home                   | Explore top-rated, popular, and upcoming movies.              |
+| Movie Details          | View movie information, overview, genres, and cast.           |
+| Similar Movies         | Discover movies related to the selected title.                |
+| Search                 | Find movies using the TMDB search API.                        |
+| Watch List             | Save, retrieve, and remove movies from a personal collection. |
+| Custom Navigation      | Animated bottom navigation with scroll-aware visibility.      |
 
-## Architecture
+### Additional UI Features
 
-The main data-driven features—Home, Details, Search, and Watch List—are organized to separate presentation, business logic, and data access. Shared utilities and reusable components live in `core/`.
+* Modern dark-themed interface.
+* Interactive movie carousels.
+* Cached network images.
+* Shimmer loading effects.
+* Error handling and retry actions.
+* Pull-to-refresh on the Home screen.
+* Empty states and user feedback notifications.
 
-```mermaid
-flowchart TD
-    UI[Views and Widgets] <--> State[Cubit and UI State]
-    State --> UseCases[Use Cases]
-    UseCases --> Contracts[Repository Contracts]
-    Contracts -. implemented by .-> Repositories[Repository Implementations]
-    Repositories --> Remote[TMDB API Services]
-    Repositories --> Local[Hive CE Watchlist Storage]
-    DI[GetIt and Injectable] -. provides dependencies .-> State
-```
+---
 
-### Project structure
+## 🛠️ Tech Stack
+
+**Core Technologies**
+
+* Flutter & Dart
+* BLoC / Cubit
+* Clean Architecture
+* Object-Oriented Programming
+* SOLID Principles
+
+**Networking & Data**
+
+* REST API
+* TMDB API
+* HTTP
+* Hive CE
+* SharedPreferences
+
+**Architecture & Dependency Management**
+
+* Feature-First Structure
+* GetIt
+* Injectable
+* Repository Pattern
+* Use Case Pattern
+* Data Mapping
+
+**UI & Experience**
+
+* Material Design
+* Cached Network Image
+* Google Fonts
+* Shimmer Loading
+* Custom Animations
+
+**Development Tools**
+
+* Git
+* GitHub
+* Postman
+
+---
+
+## 🏗️ Architecture
+
+Filmo follows Clean Architecture principles, organizing the main movie features into separate architectural layers.
 
 ```text
 lib/
-├── main.dart
-├── app_section/       # Main app shell and bottom navigation
-├── core/              # Shared UI, networking, utilities, dialogs, DI
-└── feature/
-    ├── onboarding/    # Splash screen and onboarding flow
-    ├── home/          # Popular, top-rated, and upcoming movies
-    ├── details/       # Movie information, cast/crew, similar movies
-    ├── search/        # Movie search and results
-    ├── watch_list/    # Local watchlist feature
-    ├── reels/         # Current placeholder screen
-    └── menu_drawer/   # Side menu
+│
+├── app_section/
+│
+├── core/
+│   ├── common/
+│   ├── di/
+│   ├── dialogs/
+│   ├── network/
+│   ├── utils/
+│   └── widgets/
+│
+├── feature/
+│   ├── onboarding/
+│   │
+│   ├── home/
+│   │   ├── data/
+│   │   ├── domain/
+│   │   └── presentation/
+│   │
+│   ├── details/
+│   │   ├── data/
+│   │   ├── domain/
+│   │   └── presentation/
+│   │
+│   ├── search/
+│   │
+│   ├── watch_list/
+│   │   ├── data/
+│   │   ├── domain/
+│   │   └── presentation/
+│   │
+│   ├── reels/
+│   │
+│   └── menu_drawer/
+│
+└── main.dart
 ```
 
-## TMDB API
+### Architectural Principles
 
-Filmo uses [The Movie Database (TMDB)](https://www.themoviedb.org/) for movie data.
+* **Separation of Concerns:** Each layer has a clearly defined responsibility.
+* **Repository Pattern:** Separating data access from business logic.
+* **Use Cases:** Encapsulating application operations.
+* **Dependency Injection:** Managing dependencies through GetIt and Injectable.
+* **State Management:** Managing UI states using Cubit.
+* **Reusable Components:** Keeping shared UI elements inside the Core layer.
 
-| Purpose                   | Endpoint                                             |
-| ------------------------- | ---------------------------------------------------- |
-| Popular movies            | `GET /3/movie/popular`                               |
-| Top-rated movies          | `GET /3/movie/top_rated`                             |
-| Upcoming movies           | `GET /3/movie/upcoming`                              |
-| Movie details and credits | `GET /3/movie/{movie_id}?append_to_response=credits` |
-| Similar movies            | `GET /3/movie/{movie_id}/similar`                    |
-| Search                    | `GET /3/search/movie?query={query}`                  |
+---
 
-Movie images are served from TMDB's image CDN. The app currently uses the `w500` image size for movie artwork.
+## 🌐 API Integration
 
-## Getting Started
+Filmo integrates with the [TMDB API](https://developer.themoviedb.org/docs) to retrieve movie information.
 
-### Requirements
+| Endpoint                      | Purpose           |
+| ----------------------------- | ----------------- |
+| `/3/movie/top_rated`          | Top-rated movies  |
+| `/3/movie/popular`            | Popular movies    |
+| `/3/movie/upcoming`           | Upcoming releases |
+| `/3/movie/{movie_id}`         | Movie details     |
+| `/3/movie/{movie_id}/similar` | Similar movies    |
+| `/3/search/movie`             | Movie search      |
 
-* Flutter SDK with a Dart version compatible with the constraint in `pubspec.yaml` (`^3.11.5`)
-* Android Studio or VS Code
-* TMDB API access
+Movie details are retrieved along with cast and crew information using TMDB's `append_to_response` functionality.
 
-### Run locally
+---
 
-```bash
-git clone YOUR_REPOSITORY_URL
-cd YOUR_REPOSITORY_DIRECTORY
-flutter pub get
-flutter run
-```
+## 💾 Local Storage
 
-If you change classes annotated for dependency injection, regenerate the generated configuration when needed:
+Filmo uses local storage to maintain user preferences and saved movies.
 
-```bash
-dart run build_runner build --delete-conflicting-outputs
-```
+**Hive CE**
 
-### API key note
+* Store watchlist movies locally.
+* Retrieve saved movies.
+* Remove movies from the collection.
+* Preserve saved data between application sessions.
 
-The provided source currently contains a TMDB API key directly in several API service files. Rotate that key and remove hard-coded credentials before making the repository public. A value embedded in a distributed Flutter app cannot be treated as a secret; `--dart-define` alone does not make it secure. Use a backend proxy if the credential must remain confidential.
+**SharedPreferences**
 
-## Team Project & My Role
+* Persist onboarding completion status.
+* Remember whether the user has completed the introduction screens.
 
-Filmo was developed as a team project during NTI's Flutter Mobile Application Development training. I served as **Team Leader**, contributing to the project foundation and shared core setup, coordinating feature tasks and Git workflow, reviewing code, and helping integrate the team's work.
+---
 
-The project gave me practical experience in feature-based development, Cubit state management, dependency injection, API integration, local persistence, and applying Clean Architecture principles in a collaborative codebase.
 
-## Acknowledgements
 
-* Movie data and artwork are provided by [The Movie Database (TMDB)](https://www.themoviedb.org/).
-* This product uses the TMDB API but is not endorsed or certified by TMDB.
-* Built with [Flutter](https://flutter.dev/) and [Dart](https://dart.dev/).
+## 🎥 Application Demo
+
+Explore Filmo in action:
+
+<div align="center">
+
+[▶ Click Here to Watch the Full Demo](https://github.com/user-attachments/assets/7283ead6-492a-449c-9db4-437ed821ae94)
+
+</div>
+
+---
+
+## 👨‍💻 About the Developer
+
+**Abdallrahman Mohamed Zidan**
+
+Flutter Developer | Mobile Application Developer
+
+Interested in building maintainable and scalable mobile applications, applying Clean Architecture, SOLID principles, and writing clean, reusable code.
+
+---
+
+## 🙏 Acknowledgments
+
+* [The Movie Database (TMDB)](https://www.themoviedb.org/) for providing the movie data and API.
+* Flutter and Dart communities for their valuable documentation and resources.
 
 ---
 
 <div align="center">
 
-**Filmo · Built with Flutter**
+**Made with Flutter 💙**
 
 </div>
